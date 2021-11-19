@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LogicaNegocio;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,9 +13,16 @@ namespace FabricioCespedesProyectoFase2
 {
     public partial class frmCreacionHorarios : Form
     {
+        LNHorarios lNHorarios = new LNHorarios(Config.getCadenaConexion);
         public frmCreacionHorarios()
         {
             InitializeComponent();
+        }
+
+        private void btnCrearHorario_Click(object sender, EventArgs e)
+        {
+
+            lNHorarios.obtenerTablaHorarios();
         }
     }
 }

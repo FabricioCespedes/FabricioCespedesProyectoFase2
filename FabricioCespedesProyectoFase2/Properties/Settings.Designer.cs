@@ -25,7 +25,7 @@ namespace FabricioCespedesProyectoFase2.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Server=LAPTOP-QKFQCOMI\\SQLEXPRESS;Database=Biblioteca;User Id=sa;Password=2836;")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Server=LAPTOP-QKFQCOMI\\SQLEXPRESS;Database=DBColegio;User Id=sa;Password=2836;")]
         public string CadenaConexion {
             get {
                 return ((string)(this["CadenaConexion"]));
@@ -34,7 +34,7 @@ namespace FabricioCespedesProyectoFase2.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Server=UROCCFSRLAB0119\\SQLEXPRESS;Database=Biblioteca;User Id=sa;Password=sa;")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Server=UROCCFSRLAB0119\\SQLEXPRESS;Database=DBColegio;User Id=sa;Password=sa;")]
         public string CadenaConexionINA {
             get {
                 return ((string)(this["CadenaConexionINA"]));

@@ -32,8 +32,9 @@ namespace FabricioCespedesProyectoFase2
             this.btnCrearHorario = new System.Windows.Forms.Button();
             this.btnVerHorarios = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.lvHorario = new System.Windows.Forms.ListView();
             this.cbxSecciones = new System.Windows.Forms.ComboBox();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
             // btnCrearHorario
@@ -44,6 +45,7 @@ namespace FabricioCespedesProyectoFase2
             this.btnCrearHorario.TabIndex = 0;
             this.btnCrearHorario.Text = "Crear horarios";
             this.btnCrearHorario.UseVisualStyleBackColor = true;
+            this.btnCrearHorario.Click += new System.EventHandler(this.btnCrearHorario_Click);
             // 
             // btnVerHorarios
             // 
@@ -62,16 +64,6 @@ namespace FabricioCespedesProyectoFase2
             this.label1.Size = new System.Drawing.Size(82, 13);
             this.label1.TabIndex = 2;
             this.label1.Text = "Ingrese sección";
-            // 
-            // lvHorario
-            // 
-            this.lvHorario.HideSelection = false;
-            this.lvHorario.Location = new System.Drawing.Point(57, 117);
-            this.lvHorario.Name = "lvHorario";
-            this.lvHorario.Size = new System.Drawing.Size(643, 264);
-            this.lvHorario.TabIndex = 4;
-            this.lvHorario.UseCompatibleStateImageBehavior = false;
-            this.lvHorario.Visible = false;
             // 
             // cbxSecciones
             // 
@@ -96,18 +88,27 @@ namespace FabricioCespedesProyectoFase2
             this.cbxSecciones.Size = new System.Drawing.Size(210, 21);
             this.cbxSecciones.TabIndex = 5;
             // 
+            // dataGridView1
+            // 
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Location = new System.Drawing.Point(169, 133);
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.Size = new System.Drawing.Size(428, 150);
+            this.dataGridView1.TabIndex = 6;
+            // 
             // frmCreacionHorarios
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.cbxSecciones);
-            this.Controls.Add(this.lvHorario);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btnVerHorarios);
             this.Controls.Add(this.btnCrearHorario);
             this.Name = "frmCreacionHorarios";
             this.Text = "Creación de horarios";
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -118,7 +119,7 @@ namespace FabricioCespedesProyectoFase2
         private System.Windows.Forms.Button btnCrearHorario;
         private System.Windows.Forms.Button btnVerHorarios;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ListView lvHorario;
         private System.Windows.Forms.ComboBox cbxSecciones;
+        private System.Windows.Forms.DataGridView dataGridView1;
     }
 }
