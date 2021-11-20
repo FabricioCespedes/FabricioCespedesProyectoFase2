@@ -22,7 +22,7 @@ namespace FabricioCespedesProyectoFase2
         private void btnCrearHorario_Click(object sender, EventArgs e)
         {
 
-          //  lNHorarios.ingresarLeccion();
+           MessageBox.Show(lNHorarios.procesoCrearHorarios());
         }
     }
 }

@@ -21,10 +21,10 @@ namespace AccesoDatos
         public List<EAula> listarAulas(string condicion = "")
         {
             List<EAula> listaAulas = new List<EAula>();
-            string sentecia = " SELECT idAula, codigoAula, tipoAula, borradoAula FROM Aulas";
+            string sentecia = " SELECT idAula, codigoAula, tipoAula FROM Aulas WHERE borradoAula =0";
             if (!string.IsNullOrEmpty(condicion))
             {
-                sentecia = string.Format("{0} where {1}", sentecia, condicion);
+                sentecia = string.Format("{0}  {1}", sentecia, condicion);
 
             }
             SqlConnection connection = new SqlConnection(cadConexion);
@@ -41,13 +41,11 @@ namespace AccesoDatos
                     {
                         EAula eAula = new EAula();
 
-                        eAula.IdAula = Convert.ToInt32(registro.GetString(0));
+                        eAula.IdAula = Convert.ToInt32(registro[0]);
 
                         eAula.CodigoAula = registro.GetString(1);
 
                         eAula.TipoAula = registro.GetString(2);
-
-                        eAula.BorradoAula = registro.GetString(3);
 
                         listaAulas.Add(eAula);
                     }
@@ -89,7 +87,7 @@ namespace AccesoDatos
                     {
                         EMateria materia = new EMateria();
 
-                        materia.IdMateria = Convert.ToInt32(registro.GetString(0));
+                        materia.IdMateria = Convert.ToInt32(registro[0]);
 
                         materia.NombreMateria = registro.GetString(1);
 
@@ -127,9 +125,9 @@ namespace AccesoDatos
                     while (registro.Read())
                     {
                         EGrupo grupo = new EGrupo();
-                        grupo.IdGrupo = Convert.ToInt32(registro.GetString(0));
-                        grupo.Grado = Convert.ToInt32(registro.GetString(1));
-                        grupo.Seccion = Convert.ToInt32(registro.GetString(2));
+                        grupo.IdGrupo = Convert.ToInt32(registro[0]);
+                        grupo.Grado = Convert.ToInt32(registro[1]);
+                        grupo.Seccion = Convert.ToInt32(registro[2]);
                         listaGrupos.Add(grupo);
                     }
                 }
@@ -222,6 +220,71 @@ namespace AccesoDatos
             return tablaHorarios;
         }
 
+        public int insertarHorario(EHorario horario)
+        {
+            int resultado = -1;
+            string sentencia = " INSERT INTO Horarios(idMateria,idProfesor,dia,horaInicio,horaFin,idAula,idGrupo)" +
+                " VALUES(@idMateria, @idProfesor, @dia, @horaInicio, @horaFin, @idAula, @idGrupo) ";
+            SqlConnection conexion = new SqlConnection(cadConexion);
+            SqlCommand comando = new SqlCommand(sentencia, conexion);
+            comando.Parameters.AddWithValue("@idMateria", horario.EMateria.IdMateria);
+            comando.Parameters.AddWithValue("@idProfesor", horario.EProfesor.Id);
+            comando.Parameters.AddWithValue("@dia", horario.Dia);
+            comando.Parameters.AddWithValue("@horaInicio", horario.HoraInicio);
+            comando.Parameters.AddWithValue("@horaFin", horario.HoraFinal);
+            comando.Parameters.AddWithValue("@idAula", horario.EAula.IdAula);
+            comando.Parameters.AddWithValue("@idGrupo", horario.EGrupo.IdGrupo);
+
+            try
+            {
+                conexion.Open();
+                resultado = comando.ExecuteNonQuery();
+                conexion.Close();
+            }
+            catch (Exception)
+            {
+                conexion.Close();
+                throw new Exception("Error al insertar una lección");
+            }
+            finally
+            {
+                conexion.Dispose();
+                comando.Dispose();
+            }
+            return resultado;
+
+        }
+
+        public int obtenerLeccionesProfesor(EProfesor profesor)
+        {
+            int resultado = 0;
+            SqlCommand comandoSQL = new SqlCommand();
+            SqlConnection conexionSQL = new SqlConnection(cadConexion);
+
+            comandoSQL.CommandText = "SELECT COUNT(DATEDIFF(minute, h.horaInicio, h.horaFin)/40) FROM Profesores p INNER JOIN dbo.Horarios h ON p.idProfesor = h.idProfesor WHERE P.idProfesor= @idProfesor HAVING COUNT(DATEDIFF(minute, h.horaInicio, h.horaFin)/40) <  40;";
+            comandoSQL.Parameters.AddWithValue("@idProfesor", profesor.Id);
+            comandoSQL.Connection = conexionSQL;
+            try
+            {
+                conexionSQL.Open();
+                resultado = (int)comandoSQL.ExecuteScalar();
+
+                conexionSQL.Close();
+            }
+            catch (Exception)
+            {
+                conexionSQL.Close();
+                throw new Exception("Se ha presentado un error en el conteo de la materias del profesor");
+            }
+            finally
+            {
+                comandoSQL.Dispose();
+                conexionSQL.Dispose();
+            }
+            return resultado;
+        }
+
+        // No lo ocupo
         public void actualizarDataSet(DataSet dataSet)
         {
             try
@@ -236,7 +299,7 @@ namespace AccesoDatos
             }
             catch (Exception ex)
             {
-                throw new Exception("No se pudo crear horario");
+                throw ex;
             }
         }
 
