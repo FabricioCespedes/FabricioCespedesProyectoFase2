@@ -9,10 +9,12 @@ namespace Entidades
         private int idMateria;
         private string nombreMateria;
         private int borrado;
+        private string tipoAula;
 
         public int IdMateria { get => idMateria; set => idMateria = value; }
         public string NombreMateria { get => nombreMateria; set => nombreMateria = value; }
         public int Borrado { get => borrado; set => borrado = value; }
+        public string TipoAula { get => tipoAula; set => tipoAula = value; }
 
         /// <summary>
         /// Constructor vacio de la clase materia. No recibe nada por parámetro.
@@ -28,21 +30,16 @@ namespace Entidades
         /// <param name="idMateria"></param>
         /// <param name="nombreMateria"></param>
         /// <param name="borrado"></param>
-        public EMateria(int idMateria, string nombreMateria, int borrado)
+        /// <param name="tipoAula"></param>
+        public EMateria(int idMateria, string nombreMateria, int borrado, string tipoAula)
         {
             this.idMateria = idMateria;
             this.nombreMateria = nombreMateria;
             this.borrado = borrado;
+            this.tipoAula = tipoAula;
         }
 
-        /// <summary>
-        /// Constructor de la clase materia para guardar en la base de datos. Recibe por parámetro solo el nombre materia string, el resto son valores por defecto en la base de datos. 
-        /// </summary>
-        /// <param name="nombreMateria"></param>
-        public EMateria(string nombreMateria)
-        {
-            this.nombreMateria = nombreMateria;
-        }
+
 
 
     }

@@ -63,7 +63,51 @@ namespace AccesoDatos
 
             return listaAulas;
         }
+        public List<EAula> listarAulasOrdenada(string condicion = "")
+        {
+            List<EAula> listaAulas = new List<EAula>();
+            string sentecia = " SELECT idAula, codigoAula, tipoAula FROM Aulas WHERE borradoAula =0";
+            if (!string.IsNullOrEmpty(condicion))
+            {
+                sentecia = string.Format("{0}  {1}", sentecia, condicion);
 
+            }
+            SqlConnection connection = new SqlConnection(cadConexion);
+
+            try
+            {
+                connection.Open();
+                SqlCommand comando = new SqlCommand(sentecia, connection);
+                SqlDataReader registro = comando.ExecuteReader();
+
+                if (registro.HasRows)
+                {
+                    while (registro.Read())
+                    {
+                        EAula eAula = new EAula();
+
+                        eAula.IdAula = Convert.ToInt32(registro[0]);
+
+                        eAula.CodigoAula = registro.GetString(1);
+
+                        eAula.TipoAula = registro.GetString(2);
+
+                        listaAulas.Add(eAula);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                connection.Close();
+                throw new Exception("Ha ocurrido un error en la selección de aulas");
+            }
+            finally
+            {
+                connection.Dispose();
+            }
+
+            return listaAulas;
+        }
         public List<EMateria> listarMaterias(string condicion = "")
         {
             List<EMateria> listaMaterias = new List<EMateria>();
@@ -108,10 +152,106 @@ namespace AccesoDatos
             return listaMaterias;
         }
 
+        public List<EMateria> listarMateriasOrdenada(string condicion = "")
+        {
+            List<EMateria> listaMaterias = new List<EMateria>();
+            string sentecia = " SELECT idMateria, nombreMateria FROM materias";
+            if (!string.IsNullOrEmpty(condicion))
+            {
+                sentecia = string.Format("{0} {1}", sentecia, condicion);
+
+            }
+            SqlConnection connection = new SqlConnection(cadConexion);
+
+            try
+            {
+                connection.Open();
+                SqlCommand comando = new SqlCommand(sentecia, connection);
+                SqlDataReader registro = comando.ExecuteReader();
+
+                if (registro.HasRows)
+                {
+                    while (registro.Read())
+                    {
+                        EMateria materia = new EMateria();
+
+                        materia.IdMateria = Convert.ToInt32(registro[0]);
+
+                        materia.NombreMateria = registro.GetString(1);
+
+                        listaMaterias.Add(materia);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                connection.Close();
+                throw new Exception("Ha ocurrido un error en la selección de aulas");
+            }
+            finally
+            {
+                connection.Dispose();
+            }
+
+            return listaMaterias;
+        }
+       
+        public EHorario devolverHorario(string condicion)
+        {
+            EHorario horario = new EHorario();
+            EMateria materia = new EMateria();
+            EProfesor eProfesor = new EProfesor();
+            EAula eAula = new EAula();
+            string sentencia = $"SELECT M.nombreMateria, P.nombreProfe, P.apellido1Profe, h.dia, " +
+                              $" h.horaInicio, h.horaFin, a.codigoAula FROM Horarios H JOIN Materias " +
+                              $"M ON H.idMateria = M.idMateria JOIN Profesores P ON H.idProfesor = " +
+                              $"P.idProfesor JOIN Aulas A ON A.idAula = H.idAula JOIN Grupos G ON G.idGrupo =" +
+                              $" H.idGrupo " + $" WHERE {condicion}";
+
+            SqlConnection connection = new SqlConnection(cadConexion);
+
+            SqlCommand comando = new SqlCommand(sentencia, connection);
+
+            SqlDataReader sqlDataReader;
+
+            try
+            {
+                connection.Open();
+
+                sqlDataReader = comando.ExecuteReader();
+
+                if (sqlDataReader.HasRows)
+                {
+                    sqlDataReader.Read();
+
+                    materia.NombreMateria = sqlDataReader.GetString(0);
+
+                    eProfesor.Nombre = sqlDataReader.GetString(1);
+
+                    eProfesor.Apellido1 = sqlDataReader.GetString(2);
+
+                    eAula.CodigoAula = sqlDataReader.GetString(6);
+                    horario.EAula = eAula;
+                    horario.EMateria = materia;
+                    horario.EProfesor = eProfesor;
+                }
+
+                connection.Close();
+            }
+            catch (Exception)
+            {
+                connection.Close();
+                throw new Exception("Ha ocurrido un problema en la seleccion de una leccion");
+            }
+            finally { connection.Dispose(); comando.Dispose(); }
+
+            return horario;
+        }
+
         public List<EGrupo> listarGrupos(string condicion = "")
         {
             List<EGrupo> listaGrupos = new List<EGrupo>();
-            string sentecia = " SELECT idGrupo,grado,seccion FROM Grupos ";
+            string sentecia = " SElect * from grupos order by idGrupo desc "; //
             if (!string.IsNullOrEmpty(condicion))     
                 sentecia = string.Format("{0} where {1}", sentecia, condicion);       
             SqlConnection connection = new SqlConnection(cadConexion);
@@ -131,6 +271,8 @@ namespace AccesoDatos
                         listaGrupos.Add(grupo);
                     }
                 }
+                connection.Close();                
+                registro.Close();
             }
             catch (Exception)
             {
@@ -186,7 +328,7 @@ namespace AccesoDatos
             }
 
             return listaProfesores;
-        }
+        }   
 
         public DataSet obtenerTablaHorarios(string condicion = "")
         {

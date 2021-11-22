@@ -10,8 +10,8 @@ namespace Entidades
 		EMateria eMateria;
 		EProfesor eProfesor;
 		string dia;
-		DateTime horaInicio;
-		DateTime horaFinal;
+        string horaInicio;
+        string horaFinal;
 		EAula eAula;
 		EGrupo eGrupo;
 
@@ -33,7 +33,7 @@ namespace Entidades
         /// <param name="horaFinal"></param>
         /// <param name="eAula"></param>
         /// <param name="eGrupo"></param>
-        public EHorario(int idHorario, EMateria eMateria, EProfesor eProfesor, string dia, DateTime horaInicio, DateTime horaFinal, EAula eAula, EGrupo eGrupo)
+        public EHorario(int idHorario, EMateria eMateria, EProfesor eProfesor, string dia, string horaInicio, string horaFinal, EAula eAula, EGrupo eGrupo)
         {
             this.idHorario = idHorario;
             this.eMateria = eMateria;
@@ -45,12 +45,26 @@ namespace Entidades
             this.eGrupo = eGrupo;
         }
 
+        public override string ToString()
+        {
+            if (eMateria != null )
+            {
+                return "Aula = " + eAula.CodigoAula + " / " +
+                        "Profesor = " + eProfesor.Nombre + " " + eProfesor.Apellido1 + " / " +
+                        "Materia = " + eMateria.NombreMateria;
+            }
+            else
+            {
+                return "Lección libre";
+            }
+        }
+
         public int IdHorario { get => idHorario; set => idHorario = value; }
         public EMateria EMateria { get => eMateria; set => eMateria = value; }
         public EProfesor EProfesor { get => eProfesor; set => eProfesor = value; }
         public string Dia { get => dia; set => dia = value; }
-        public DateTime HoraInicio { get => horaInicio; set => horaInicio = value; }
-        public DateTime HoraFinal { get => horaFinal; set => horaFinal = value; }
+        public string HoraInicio { get => horaInicio; set => horaInicio = value; }
+        public string HoraFinal { get => horaFinal; set => horaFinal = value; }
         public EAula EAula { get => eAula; set => eAula = value; }
         public EGrupo EGrupo { get => eGrupo; set => eGrupo = value; }
     }

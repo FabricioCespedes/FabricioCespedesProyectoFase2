@@ -17,7 +17,7 @@ namespace LogicaNegocio
         List<EMateria> listaMaterias;
         List<EProfesor> listaProfesores;
         List<EAula> listaAulas;
-
+        int contador;
         /// <summary>
         /// Constructor de la lógica de negocio de laclase Horarios. Recibe 
         /// </summary>
@@ -27,7 +27,6 @@ namespace LogicaNegocio
             this.cadConexion = cadConexion;
             aDHorarios = new ADHorarios(cadConexion);
             listaGrupos = aDHorarios.listarGrupos();
-            listaMaterias = aDHorarios.listarMaterias();
             listaProfesores = aDHorarios.listarProfesores();
             listaAulas = aDHorarios.listarAulas();
         }
@@ -36,6 +35,32 @@ namespace LogicaNegocio
         {
             foreach (EGrupo grupo in listaGrupos)
             {
+                if (grupo.Grado >= 12)
+                {
+                    string condicion = " ORDER BY tipoAula desc";
+                    listaMaterias = aDHorarios.listarMateriasOrdenada(condicion);
+                    condicion = " order by tipoAula ";
+                    listaAulas = aDHorarios.listarAulasOrdenada(condicion); 
+                }
+                else
+                {
+                    if (grupo.Grado == 11)
+                    {
+                        string condicion = " order by nombreMateria desc";
+                        listaMaterias = aDHorarios.listarMateriasOrdenada(condicion);
+                        condicion = " order by tipoAula ";
+                        listaAulas = aDHorarios.listarAulasOrdenada(condicion);
+                    }
+                    else
+                    {
+
+                        string condicion = " ORDER BY tipoAula asc";
+                        listaMaterias = aDHorarios.listarMateriasOrdenada(condicion);
+                        condicion = " order by tipoAula desc ";
+                        listaAulas = aDHorarios.listarAulasOrdenada(condicion);
+                     
+                    }
+                }
                 recorrerMaterias(grupo);
             }
             return "Completado";
@@ -56,33 +81,36 @@ namespace LogicaNegocio
         {
             switch (horario.EGrupo.Grado)
             {
-                //case 7:
-                //case 8:
-                //case 9:
-                //    switch (horario.EMateria.NombreMateria)
-                //    {
-                //        case "ingles":
-                //            buscarLeccionesVacias(6, horario,2,"Normal");
-                //            break;
-                //        case "Español":
-                //        case "Estudios Sociales":
-                //        case "ciencias":
-                //        case "Matematicas":
-                //            buscarLeccionesVacias(4, horario, 2, "Normal");
-                //            break;
-                //        case "Educacion Financiera":
-                //            buscarLeccionesVacias(2, horario, 1, "Normal");
-                //            break;
-                //        case "Computacion":
-                //            buscarLeccionesVacias(2, horario, 2,"Computo");
-                //            break;
-                //        case "Contabilidad":
-                //            break;
-                //        default:
-                //            buscarLeccionesVacias(2, horario, 2, "Normal");
-                //            break;
-                //    }
-                //    break;
+                case 7:
+                case 8:
+                case 9:
+                    switch (horario.EMateria.NombreMateria)
+                    {
+                        case "ingles":
+                            buscarLeccionesVacias(6, horario, 2, "Normal");
+                            break;
+                        case "español":
+                        case "Estudios Sociales":
+                        case "ciencias":
+                        case "Matematicas":
+                            buscarLeccionesVacias(4, horario, 2, "Normal");
+                            break;
+                        case "Educacion Financiera":
+                            buscarLeccionesVacias(1, horario, 1, "Normal");
+                            break;
+                        case "Computacion":
+                            buscarLeccionesVacias(2, horario, 2, "Computo");
+                            break;
+                        case "Contabilidad":
+                            break;
+                        case "Educacion Fisica":
+                            buscarLeccionesVacias(2, horario, 2, "Normal");
+                            break;
+                        default:
+                            buscarLeccionesVacias(2, horario, 2, "Normal");
+                            break;
+                    }
+                    break;
                 case 10:
                 case 11:
                 case 12:
@@ -91,17 +119,20 @@ namespace LogicaNegocio
                         case "ingles":
                             buscarLeccionesVacias(6, horario, 2, "Normal");
                             break;
-                        case "Español":
+                        case "español":
                         case "Estudios Sociales":
                         case "ciencias":
                         case "Matematicas":
-                            buscarLeccionesVacias(4, horario, 2, "Normal");
+                           buscarLeccionesVacias(4, horario, 2, "Normal");
                             break;
                         case "Contabilidad":                            
-                           // buscarLeccionesVacias(12, horario, 4, "Contabilidad");
+                            buscarLeccionesVacias(12, horario, 4, "Contabilidad");
                             break;
                         case "Computacion":                       
-                           //  buscarLeccionesVacias(12, horario, 4, "Computo");
+                            buscarLeccionesVacias(12, horario, 4, "Computo");
+                            break;
+                        case "Educacion Fisica":
+                            buscarLeccionesVacias(2, horario, 2, "Normal");
                             break;
                         default:
                             break;
@@ -126,7 +157,24 @@ namespace LogicaNegocio
 
         private bool recorrerDias(int cantidadMinimaLecciones, EHorario horario, string tipoAula)
         {
-            string[] dias = new string[] { "L", "K", "M", "J", "V" };
+            string[] dias ;
+            if (horario.EGrupo.Grado >= 12)
+            {
+                dias = new string[] { "V", "J", "M", "K", "L" };
+
+            }
+            else
+            {
+                if (horario.EGrupo.Grado >= 9)
+                {
+                    dias = new string[] { "J", "K", "V", "L", "M" };
+
+                }
+                else
+                {
+                    dias = new string[] { "L", "K", "M", "J", "V" };
+                }
+            }
             bool espacioEncontrado = false;
             int i = 0;
 
@@ -141,20 +189,47 @@ namespace LogicaNegocio
 
         private bool recorrerLecciones(int cantidadMinimaLecciones, EHorario horario, string tipoAula)
         {
-            string[,] lecciones = new string[10, 2]
-            {
-              { "07:20", "08:00" },
-              { "08:00", "08:40" },
-              { "09:00", "09:40" },
-              { "09:40", "10:20" },
-              { "10:40", "11:20" },
-              { "11:20", "12:00" },
-              { "13:00", "13:40" },
-              { "13:40", "14:20" },                       
-              { "14:40", "15:20" },
-              { "15:20", "16:00" },
-            };
+            string condicion;
+            string[,] lecciones;
+            if (horario.EGrupo.Grado >= 9 || (horario.EGrupo.Grado == 7 && horario.EGrupo.Seccion == 1)
 
+
+                || (horario.EGrupo.Grado == 7 && horario.EGrupo.Seccion == 2) 
+
+
+                || (horario.EGrupo.Grado == 7 && horario.EGrupo.Seccion == 3) )
+            {
+                lecciones = new string[10, 2]
+                {
+                    { "07:20", "08:00" },
+                    { "08:00", "08:40" },
+                    { "09:00", "09:40" },
+                    { "09:40", "10:20" },
+                    { "10:40", "11:20" },
+                    { "11:20", "12:00" },
+                    { "13:00", "13:40" },
+                    { "13:40", "14:20" },
+                    { "14:40", "15:20" },
+                    { "15:20", "16:00" },
+                };
+            }
+            else
+            {
+                lecciones = new string[10, 2]
+                {
+                    { "14:40", "15:20" },
+                    { "15:20", "16:00" },
+                    { "13:00", "13:40" },
+                    { "13:40", "14:20" },
+                    { "10:40", "11:20" },
+                    { "11:20", "12:00" },
+                    { "09:00", "09:40" },
+                    { "09:40", "10:20" },
+                    { "07:20", "08:00" },
+                    { "08:00", "08:40" },
+                };
+            }
+           
             bool espacioEncontrado = false;
             int i = 0;
 
@@ -163,31 +238,79 @@ namespace LogicaNegocio
                 // Validación del aula.
                 switch (cantidadMinimaLecciones)
                 {
-                    case 2:                       
-                        espacioEncontrado = validarAula(horario, lecciones[i, 0], lecciones[i, 1], lecciones[i + 1, 0], lecciones[i + 1, 1],  tipoAula);
-                        i = i + 2;
+                    case 2:
+                        if (i <= 8)
+                        {
+                            condicion = $" idGrupo = '{horario.EGrupo.IdGrupo}' AND horaInicio = '{lecciones[i, 0]}' AND horaFin = '{lecciones[i, 1]}' AND dia = '{horario.Dia}'";
+
+                            if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
+                            {
+                                condicion = $" idGrupo = '{horario.EGrupo.IdGrupo}' AND horaInicio = '{lecciones[i + 1, 0]}' AND horaFin = '{lecciones[i + 1, 1]}' AND dia = '{horario.Dia}'";
+
+                                if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
+                                {
+
+                                    espacioEncontrado = validarAula(horario, lecciones[i, 0], lecciones[i, 1], lecciones[i + 1, 0], lecciones[i + 1, 1], tipoAula);
+
+                                }
+                            }
+                        }
                         break;
                     case 1:
-                        espacioEncontrado = validarAula(horario, lecciones[i, 0], lecciones[i, 1],  tipoAula);
-                        i++;
-                        break;
-                    case 4:
-                        // Validar que espacio no se salga
-                        espacioEncontrado = validarEspecialidad(horario, lecciones[i, 0], lecciones[i, 1], lecciones[i + 1, 0], lecciones[i + 1, 1],
-                            lecciones[i + 2, 0], lecciones[i + 2, 1], lecciones[i + 3, 0], lecciones[i + 3, 1],
-                            tipoAula);
-                        if (espacioEncontrado == false)
+                         condicion = $" idGrupo = '{horario.EGrupo.IdGrupo}' AND horaInicio = '{lecciones[i, 0]}' AND horaFin = '{lecciones[i, 1]}' AND dia = '{horario.Dia}'";
+
+                        if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
                         {
-                            espacioEncontrado = validarAula(horario, lecciones[i, 0], lecciones[i, 1], lecciones[i + 1, 0], lecciones[i + 1, 1],
-                            lecciones[i + 2, 0], lecciones[i + 2, 1], lecciones[i + 3, 0], lecciones[i + 3, 1],
-                            tipoAula);
+                            espacioEncontrado = validarAula(horario, lecciones[i, 0], lecciones[i, 1], tipoAula);
                         }
 
-                        i = i + 4;
+                        break;
+                    case 4:
+                        if (i < 7)
+                        {
+
+                            espacioEncontrado = validarEspecialidad(horario, lecciones[i, 0], lecciones[i, 1], lecciones[i + 1, 0], lecciones[i + 1, 1],
+                            lecciones[i + 2, 0], lecciones[i + 2, 1], lecciones[i + 3, 0], lecciones[i + 3, 1], tipoAula);
+
+                            if (espacioEncontrado == false)
+                            {
+                                // Validar que el grupo este libre en las lecciones designadas.
+                                condicion = $" idGrupo = '{horario.EGrupo.IdGrupo}' AND horaInicio = '{lecciones[i, 0]}' AND horaFin = '{lecciones[i, 1]}' AND dia = '{horario.Dia}'";
+
+                                if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
+                                {
+                                    condicion = $" idGrupo = '{horario.EGrupo.IdGrupo}' AND horaInicio = '{lecciones[i + 1, 0]}' AND horaFin = '{lecciones[i + 1, 1]}' AND dia = '{horario.Dia}'";
+
+                                    if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
+                                    {
+                                        condicion = $" idGrupo = '{horario.EGrupo.IdGrupo}' AND horaInicio = '{lecciones[i + 2, 0]}' AND horaFin = '{lecciones[i + 2, 1]}' AND dia = '{horario.Dia}'";
+                                        if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
+                                        {
+                                            condicion = $" idGrupo = '{horario.EGrupo.IdGrupo}' AND horaInicio = '{lecciones[i + 3, 0]}' AND horaFin = '{lecciones[i + 3, 1]}' AND dia = '{horario.Dia}'";
+
+                                            if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
+                                            {
+                                                espacioEncontrado = validarAula(horario, lecciones[i, 0], lecciones[i, 1], lecciones[i + 1, 0], lecciones[i + 1, 1],
+                                                lecciones[i + 2, 0], lecciones[i + 2, 1], lecciones[i + 3, 0], lecciones[i + 3, 1],
+                                                tipoAula);
+                                            }
+                                        }
+                                    }
+                                }
+                            }                                                                                                     
+                            
+                        }
+                        else
+                        {
+                            espacioEncontrado = false;
+
+                        }
+
                         break;
                     default:
                         break;
                 }
+                i++;
             }
 
             return espacioEncontrado;
@@ -197,34 +320,42 @@ namespace LogicaNegocio
              string leccion3Inicio, string leccion3Final, string leccion4Inicio, string leccion4Final, string tipoAula)
         {
             bool espacioEncontrado = false;
-
-            int idMateria;   
-
+            int idMateria;
             if (horario.EMateria.NombreMateria == "Contabilidad")
             {
                 string condicion = $" nombreMateria = 'Computacion' ";
-
                 idMateria = aDHorarios.listarMaterias(condicion)[0].IdMateria;
-
-                condicion = $" idMateria = {idMateria} AND horaInicio = '{leccion1Inicio}' AND horaFin = '{leccion1Final}' AND dia = '{horario.Dia}' AND idGrupo = '{horario.EGrupo.IdGrupo}'";
-                if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 1)
+                condicion = $" idMateria = {idMateria} AND idGrupo = {horario.EGrupo.IdGrupo} ";
+                if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count > 0)
                 {
-                    condicion = $" idMateria = {idMateria} AND horaInicio = '{leccion2Inicio}' AND horaFin = '{leccion2Final}' AND dia = '{horario.Dia}' AND idGrupo = '{horario.EGrupo.IdGrupo}'";
+                    condicion = $" idMateria = {idMateria} AND horaInicio = '{leccion1Inicio}' AND horaFin = '{leccion1Final}' AND dia = '{horario.Dia}' AND idGrupo = '{horario.EGrupo.IdGrupo}'";
                     if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 1)
                     {
-                        condicion = $" idMateria = {idMateria} AND horaInicio = '{leccion3Inicio}' AND horaFin = '{leccion3Final}' AND dia = '{horario.Dia}' AND idGrupo = '{horario.EGrupo.IdGrupo}'";
+                        condicion = $" idMateria = {idMateria} AND horaInicio = '{leccion2Inicio}' AND horaFin = '{leccion2Final}' AND dia = '{horario.Dia}' AND idGrupo = '{horario.EGrupo.IdGrupo}'";
                         if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 1)
                         {
-                            condicion = $" idMateria = {idMateria} AND horaInicio = '{leccion4Inicio}' AND horaFin = '{leccion4Final}' AND dia = '{horario.Dia}' AND idGrupo = '{horario.EGrupo.IdGrupo}'";
+                            condicion = $" idMateria = {idMateria} AND horaInicio = '{leccion3Inicio}' AND horaFin = '{leccion3Final}' AND dia = '{horario.Dia}' AND idGrupo = '{horario.EGrupo.IdGrupo}'";
                             if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 1)
                             {
-                                validarAula(horario, leccion1Inicio, leccion1Final, leccion2Inicio, leccion2Final, leccion3Inicio, leccion3Final, leccion4Inicio, leccion4Final, tipoAula);
-                                espacioEncontrado = true;
+                                condicion = $" idMateria = {idMateria} AND horaInicio = '{leccion4Inicio}' AND horaFin = '{leccion4Final}' AND dia = '{horario.Dia}' AND idGrupo = '{horario.EGrupo.IdGrupo}'";
+                                if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 1)
+                                {
+                                    condicion = $" idMateria = {horario.EMateria.IdMateria} AND horaInicio = '{leccion1Inicio}' AND horaFin = '{leccion1Final}' AND dia = '{horario.Dia}' AND idGrupo = '{horario.EGrupo.IdGrupo}'";
+                                    if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
+                                    {
+                                        condicion = $" idMateria = {horario.EMateria.IdMateria} AND horaInicio = '{leccion2Inicio}' AND horaFin = '{leccion2Final}' AND dia = '{horario.Dia}' AND idGrupo = '{horario.EGrupo.IdGrupo}'";
+                                        if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
+                                        {
+                                            validarAula(horario, leccion1Inicio, leccion1Final, leccion2Inicio, leccion2Final, leccion3Inicio, leccion3Final, leccion4Inicio, leccion4Final, tipoAula);
+                                            espacioEncontrado = true;
+                                        }
+                                    }
+
+                                }
                             }
                         }
                     }
                 }
-
             }
             else
             {
@@ -232,20 +363,33 @@ namespace LogicaNegocio
 
                 idMateria = aDHorarios.listarMaterias(condicion)[0].IdMateria;
 
-                condicion = $" idMateria = {idMateria} AND horaInicio = '{leccion1Inicio}' AND horaFin = '{leccion1Final}' AND dia = '{horario.Dia}' AND idGrupo = '{horario.EGrupo.IdGrupo}'";
-                if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 1)
+                condicion = $" idMateria = {idMateria} AND idGrupo = {horario.EGrupo.IdGrupo} ";
+                if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count > 0)
                 {
-                    condicion = $" idMateria = {idMateria} AND horaInicio = '{leccion2Inicio}' AND horaFin = '{leccion2Final}' AND dia = '{horario.Dia}' AND idGrupo = '{horario.EGrupo.IdGrupo}'";
+                    condicion = $" idMateria = {idMateria} AND horaInicio = '{leccion1Inicio}' AND horaFin = '{leccion1Final}' AND dia = '{horario.Dia}' AND idGrupo = '{horario.EGrupo.IdGrupo}'";
                     if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 1)
                     {
-                        condicion = $" idMateria = {idMateria} AND horaInicio = '{leccion3Inicio}' AND horaFin = '{leccion3Final}' AND dia = '{horario.Dia}' AND idGrupo = '{horario.EGrupo.IdGrupo}'";
+                        condicion = $" idMateria = {idMateria} AND horaInicio = '{leccion2Inicio}' AND horaFin = '{leccion2Final}' AND dia = '{horario.Dia}' AND idGrupo = '{horario.EGrupo.IdGrupo}'";
                         if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 1)
                         {
-                            condicion = $" idMateria = {idMateria} AND horaInicio = '{leccion4Inicio}' AND horaFin = '{leccion4Final}' AND dia = '{horario.Dia}' AND idGrupo = '{horario.EGrupo.IdGrupo}'";
+                            condicion = $" idMateria = {idMateria} AND horaInicio = '{leccion3Inicio}' AND horaFin = '{leccion3Final}' AND dia = '{horario.Dia}' AND idGrupo = '{horario.EGrupo.IdGrupo}'";
                             if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 1)
                             {
-                                validarAula(horario, leccion1Inicio, leccion1Final, leccion2Inicio, leccion2Final, leccion3Inicio, leccion3Final, leccion4Inicio, leccion4Final, tipoAula);
-                                espacioEncontrado = true;
+                                condicion = $" idMateria = {idMateria} AND horaInicio = '{leccion4Inicio}' AND horaFin = '{leccion4Final}' AND dia = '{horario.Dia}' AND idGrupo = '{horario.EGrupo.IdGrupo}'";
+                                if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 1)
+                                {
+                                    condicion = $" idMateria = {horario.EMateria.IdMateria} AND horaInicio = '{leccion1Inicio}' AND horaFin = '{leccion1Final}' AND dia = '{horario.Dia}' AND idGrupo = '{horario.EGrupo.IdGrupo}'";
+                                    if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
+                                    {
+                                        condicion = $" idMateria = {horario.EMateria.IdMateria} AND horaInicio = '{leccion2Inicio}' AND horaFin = '{leccion2Final}' AND dia = '{horario.Dia}' AND idGrupo = '{horario.EGrupo.IdGrupo}'";
+                                        if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
+                                        {
+                                            validarAula(horario, leccion1Inicio, leccion1Final, leccion2Inicio, leccion2Final, leccion3Inicio, leccion3Final, leccion4Inicio, leccion4Final, tipoAula);
+                                            espacioEncontrado = true;
+                                        }
+                                    }
+
+                                }
                             }
                         }
                     }
@@ -371,25 +515,15 @@ namespace LogicaNegocio
                         {
                             if (aDHorarios.obtenerLeccionesProfesor(listaProfesores[i]) <= 40)
                             {
-                                condicion = $" idGrupo = '{horario.EGrupo.IdGrupo}' AND horaInicio = '{leccion1Inicio}' AND horaFin = '{leccion1Final}' AND dia = '{horario.Dia}'";
 
-                                if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
-                                {
-                                    condicion = $" idGrupo = '{horario.EGrupo.IdGrupo}' AND horaInicio = '{leccion2Inicio}' AND horaFin = '{leccion2Final}' AND dia = '{horario.Dia}'";
-
-                                    if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
-                                    {
-                                        horario.EProfesor = listaProfesores[i];
-                                        horario.HoraInicio = Convert.ToDateTime(leccion1Inicio);
-                                        horario.HoraFinal = Convert.ToDateTime(leccion1Final);
-                                        aDHorarios.insertarHorario(horario);
-                                        horario.HoraInicio = Convert.ToDateTime(leccion2Inicio);
-                                        horario.HoraFinal = Convert.ToDateTime(leccion2Final);
-                                        aDHorarios.insertarHorario(horario);
-                                        espacioEncontrado = true;
-
-                                    }
-                                }
+                                horario.EProfesor = listaProfesores[i];
+                                horario.HoraInicio = leccion1Inicio;
+                                horario.HoraFinal = leccion1Final;
+                                aDHorarios.insertarHorario(horario);
+                                horario.HoraInicio = leccion2Inicio;
+                                horario.HoraFinal = leccion2Final;
+                                aDHorarios.insertarHorario(horario);
+                                espacioEncontrado = true;                              
                             }
                             else
                             {
@@ -421,16 +555,11 @@ namespace LogicaNegocio
                     {
                             if (aDHorarios.obtenerLeccionesProfesor(listaProfesores[i]) <= 40)
                             {
-                                condicion = $" idGrupo = '{horario.EGrupo.IdGrupo}' AND horaInicio = '{leccion1Inicio}' AND horaFin = '{leccion1Final}' AND dia = '{horario.Dia}'";
-
-                                if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
-                                {
                                     horario.EProfesor = listaProfesores[i];
-                                    horario.HoraInicio = Convert.ToDateTime(leccion1Inicio);
-                                    horario.HoraFinal = Convert.ToDateTime(leccion1Final);
+                                    horario.HoraInicio = leccion1Inicio;
+                                    horario.HoraFinal = leccion1Final;
                                     aDHorarios.insertarHorario(horario);
-                                    espacioEncontrado = true;                                   
-                                }
+                                    espacioEncontrado = true;                                                        
                             }
                             else
                             {
@@ -473,19 +602,19 @@ namespace LogicaNegocio
                                 if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
                                 {
                                     horario.EProfesor = listaProfesores[i];
-                                    horario.HoraInicio = Convert.ToDateTime(leccion1Inicio);
-                                    horario.HoraFinal = Convert.ToDateTime(leccion1Final);
+                                    horario.HoraInicio = leccion1Inicio;
+                                    horario.HoraFinal = leccion1Final;
                                     aDHorarios.insertarHorario(horario);
-                                    horario.HoraInicio = Convert.ToDateTime(leccion2Inicio);
-                                    horario.HoraFinal = Convert.ToDateTime(leccion2Final);
+                                    horario.HoraInicio = leccion2Inicio;
+                                    horario.HoraFinal = leccion2Final;
                                     aDHorarios.insertarHorario(horario);
-                                    horario.HoraInicio = Convert.ToDateTime(leccion3Inicio);
-                                    horario.HoraFinal = Convert.ToDateTime(leccion3Final);
+                                    horario.HoraInicio = leccion3Inicio;
+                                    horario.HoraFinal = leccion3Final;
                                     aDHorarios.insertarHorario(horario);
-                                    horario.HoraInicio = Convert.ToDateTime(leccion4Inicio);
-                                    horario.HoraFinal = Convert.ToDateTime(leccion4Final);
+                                    horario.HoraInicio = leccion4Inicio;
+                                    horario.HoraFinal = leccion4Final;
                                     aDHorarios.insertarHorario(horario);
-                                    espacioEncontrado = true;
+                                    espacioEncontrado = true;                                                                                                                                                              
                                 }
                             }
                         }
@@ -495,6 +624,70 @@ namespace LogicaNegocio
             }
             return espacioEncontrado;
         }
+
+        public EHorario devolverHorario(string condicion)
+        {
+            EHorario horario;
+
+            ADHorarios aDHorarios = new ADHorarios(cadConexion);
+
+            try
+            {
+                horario = aDHorarios.devolverHorario(condicion);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+            return horario;
+        }
+
+
+        public List<EHorario> listaHorario(int grado, int seccion, int anio, string dia, string condicion2 = "")
+        {
+            List<EHorario> listaHorarios = new List<EHorario>();
+
+            string[,] lecciones;
+            lecciones = new string[10, 2]
+            {
+                { "07:20", "08:00" },
+                { "08:00", "08:40" },
+                { "09:00", "09:40" },
+                { "09:40", "10:20" },
+                { "10:40", "11:20" },
+                { "11:20", "12:00" },
+                { "13:00", "13:40" },
+                { "13:40", "14:20" },
+                { "14:40", "15:20" },
+                { "15:20", "16:00" },
+            };
+
+            for (int i = 0; i < 10; i++)
+            {
+                EHorario eHorario = new EHorario();
+                string condicion = $" g.grado= {grado} and g.seccion = {seccion} AND h.horaInicio = '{lecciones[i,0]}' AND h.horaFin = '{lecciones[i, 1]}' AND h.dia = '{dia}' AND g.anio = {anio} ";
+                if (condicion !="")
+                {
+                    condicion = string.Format("{0} {1}", condicion, condicion2);
+                }
+
+                if (aDHorarios.devolverHorario(condicion) != null)
+                {
+                    eHorario = aDHorarios.devolverHorario(condicion);
+                }
+
+                listaHorarios.Add(eHorario);
+            }
+
+
+        EHorario horario = new EHorario();
+
+        return listaHorarios;
+        }
+
+
 
         /*        public void ingresarLeccion()
         {          //EHorario horario
