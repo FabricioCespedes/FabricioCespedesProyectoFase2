@@ -391,5 +391,47 @@ namespace FabricioCespedesProyectoFase2
         {
 
         }
+
+        private void btnBorrarHorarios_Click(object sender, EventArgs e)
+        {
+            int anio;
+            string mensaje="";
+            try
+            {
+                try
+                {
+                    anio = Convert.ToInt32(txtAnio.Text);
+                }
+                catch (Exception)
+                {
+                    txtAnio.Focus();
+                    throw new Exception("Ingrese el año");
+                }
+                string condicion2 = $"  anio = {anio} ";
+                if (lNHorarios.listarGrupos(condicion2).Count > 0)
+                {
+                    List<EGrupo> listaGrupos = lNHorarios.listarGrupos(condicion2);
+                    EHorario eHorario = new EHorario();
+                    foreach (EGrupo grupo in listaGrupos)
+                    {
+                        eHorario.EGrupo = grupo;
+                        mensaje = lNHorarios.eliminarProcedure(eHorario);
+                    }
+                    MessageBox.Show(mensaje);
+                }
+                else
+                {
+                    txtAnio.Focus();
+                    throw new Exception("No hay grupos creados en para ese año");
+                }
+
+
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
     }
 }

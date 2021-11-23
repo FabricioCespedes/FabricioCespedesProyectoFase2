@@ -944,5 +944,23 @@ namespace LogicaNegocio
 
             return listaA;
         }
+
+        public string eliminarProcedure(EHorario horario)
+        {
+
+            string mensaje = "";
+
+            try
+            {
+                mensaje = aDHorarios.eliminarProcedure(horario);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+            return mensaje;
+        }
     }
 }

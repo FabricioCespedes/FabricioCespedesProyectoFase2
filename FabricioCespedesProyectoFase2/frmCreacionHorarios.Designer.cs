@@ -43,6 +43,7 @@ namespace FabricioCespedesProyectoFase2
             this.txtAnio = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.cbxEspecialidad = new System.Windows.Forms.ComboBox();
+            this.btnBorrarHorarios = new System.Windows.Forms.Button();
             Leccion = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SuspendLayout();
             // 
@@ -63,9 +64,9 @@ namespace FabricioCespedesProyectoFase2
             // 
             // btnVerHorarios
             // 
-            this.btnVerHorarios.Location = new System.Drawing.Point(516, 50);
+            this.btnVerHorarios.Location = new System.Drawing.Point(516, 51);
             this.btnVerHorarios.Name = "btnVerHorarios";
-            this.btnVerHorarios.Size = new System.Drawing.Size(115, 22);
+            this.btnVerHorarios.Size = new System.Drawing.Size(115, 24);
             this.btnVerHorarios.TabIndex = 1;
             this.btnVerHorarios.Text = "Ver horarios";
             this.btnVerHorarios.UseVisualStyleBackColor = true;
@@ -184,11 +185,22 @@ namespace FabricioCespedesProyectoFase2
             this.cbxEspecialidad.TabIndex = 9;
             this.cbxEspecialidad.Visible = false;
             // 
+            // btnBorrarHorarios
+            // 
+            this.btnBorrarHorarios.Location = new System.Drawing.Point(646, 17);
+            this.btnBorrarHorarios.Name = "btnBorrarHorarios";
+            this.btnBorrarHorarios.Size = new System.Drawing.Size(115, 24);
+            this.btnBorrarHorarios.TabIndex = 10;
+            this.btnBorrarHorarios.Text = "Borrar horarios";
+            this.btnBorrarHorarios.UseVisualStyleBackColor = true;
+            this.btnBorrarHorarios.Click += new System.EventHandler(this.btnBorrarHorarios_Click);
+            // 
             // frmCreacionHorarios
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1370, 749);
+            this.Controls.Add(this.btnBorrarHorarios);
             this.Controls.Add(this.cbxEspecialidad);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.txtAnio);
@@ -221,5 +233,6 @@ namespace FabricioCespedesProyectoFase2
         private System.Windows.Forms.TextBox txtAnio;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ComboBox cbxEspecialidad;
+        private System.Windows.Forms.Button btnBorrarHorarios;
     }
 }

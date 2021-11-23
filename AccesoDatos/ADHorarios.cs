@@ -430,7 +430,35 @@ namespace AccesoDatos
             }
             return resultado;
         }
-        
 
+        public string eliminarProcedure(EHorario horario)
+        {
+            string mensaje;
+            string sentencia = "EliminarHorario";
+            SqlConnection connection = new SqlConnection(cadConexion);
+            SqlCommand comando = new SqlCommand(sentencia, connection);
+            comando.CommandType = CommandType.StoredProcedure;
+            comando.Parameters.AddWithValue("@IdGrupo", horario.EGrupo.IdGrupo);
+            comando.Parameters.Add("@msj", SqlDbType.VarChar, 100).Direction = ParameterDirection.Output;
+
+            try
+            {
+                connection.Open();
+                comando.ExecuteNonQuery();
+                mensaje = comando.Parameters["@msj"].Value.ToString();
+                connection.Close();
+            }
+            catch (Exception)
+            {
+                throw new Exception("Se ha producido un error en el proceso eliminar producto");
+            }
+            finally
+            {
+                connection.Dispose();
+                comando.Dispose();
+            }
+
+            return mensaje;
+        }
     }
 }
