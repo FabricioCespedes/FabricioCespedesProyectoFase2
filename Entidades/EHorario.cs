@@ -49,8 +49,8 @@ namespace Entidades
         {
             if (eMateria != null )
             {
-                return "Aula = " + eAula.CodigoAula + " / " +
-                        "Profesor = " + eProfesor.Nombre + " " + eProfesor.Apellido1 + " / " +
+                return "Aula = " + eAula.CodigoAula + " / \n" +
+                        "Profesor = " + eProfesor.Nombre + " " + eProfesor.Apellido1 + " /\n " +
                         "Materia = " + eMateria.NombreMateria;
             }
             else

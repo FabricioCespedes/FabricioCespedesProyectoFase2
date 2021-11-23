@@ -251,9 +251,14 @@ namespace AccesoDatos
         public List<EGrupo> listarGrupos(string condicion = "")
         {
             List<EGrupo> listaGrupos = new List<EGrupo>();
-            string sentecia = " SElect * from grupos order by idGrupo desc "; //
+            string sentecia = " SElect * from grupos "; //
+            string sentecia2 = "  order by idGrupo desc "; //
             if (!string.IsNullOrEmpty(condicion))     
-                sentecia = string.Format("{0} where {1}", sentecia, condicion);       
+                sentecia = string.Format("{0} where {1} {2}", sentecia, condicion, sentecia2);    
+            else
+            {
+                sentecia = string.Format("{0}  {1} ", sentecia, sentecia2);
+            }
             SqlConnection connection = new SqlConnection(cadConexion);
             try
             {
@@ -285,7 +290,7 @@ namespace AccesoDatos
             }
             return listaGrupos;
         }
-
+   
         public List<EProfesor> listarProfesores(string condicion = "")
         {
             List<EProfesor> listaProfesores = new List<EProfesor>();
@@ -425,26 +430,7 @@ namespace AccesoDatos
             }
             return resultado;
         }
-
-        // No lo ocupo
-        public void actualizarDataSet(DataSet dataSet)
-        {
-            try
-            {
-                SqlConnection connection = new SqlConnection(cadConexion);
-                connection.Open();
-                SqlBulkCopy sqlBulkCopy = default(SqlBulkCopy);
-                sqlBulkCopy = new SqlBulkCopy(connection);
-                sqlBulkCopy.DestinationTableName = "Horarios";
-                sqlBulkCopy.WriteToServer(dataSet.Tables[0]);
-                connection.Close();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
         
+
     }
 }

@@ -17,7 +17,7 @@ namespace LogicaNegocio
         List<EMateria> listaMaterias;
         List<EProfesor> listaProfesores;
         List<EAula> listaAulas;
-        int contador;
+
         /// <summary>
         /// Constructor de la lógica de negocio de laclase Horarios. Recibe 
         /// </summary>
@@ -25,47 +25,66 @@ namespace LogicaNegocio
         public LNHorarios(string cadConexion)
         {
             this.cadConexion = cadConexion;
-            aDHorarios = new ADHorarios(cadConexion);
-            listaGrupos = aDHorarios.listarGrupos();
+            aDHorarios = new ADHorarios(cadConexion);          
             listaProfesores = aDHorarios.listarProfesores();
             listaAulas = aDHorarios.listarAulas();
         }
 
-        public string  procesoCrearHorarios()
+        /// <summary>
+        /// Método para crear horarios. Recibe por parámetro el año al que desea crear el horario.
+        /// </summary>
+        /// <param name="anio"></param>
+        /// <returns></returns>
+        public string  procesoCrearHorarios(int anio)
         {
-            foreach (EGrupo grupo in listaGrupos)
+            try
             {
-                if (grupo.Grado >= 12)
+                string condicion2 = $" anio = {anio}";
+                listaGrupos = aDHorarios.listarGrupos(condicion2);
+                foreach (EGrupo grupo in listaGrupos)
                 {
-                    string condicion = " ORDER BY tipoAula desc";
-                    listaMaterias = aDHorarios.listarMateriasOrdenada(condicion);
-                    condicion = " order by tipoAula ";
-                    listaAulas = aDHorarios.listarAulasOrdenada(condicion); 
-                }
-                else
-                {
-                    if (grupo.Grado == 11)
+                    if (grupo.Grado >= 12)
                     {
-                        string condicion = " order by nombreMateria desc";
+                        string condicion = " ORDER BY tipoAula desc";
                         listaMaterias = aDHorarios.listarMateriasOrdenada(condicion);
                         condicion = " order by tipoAula ";
                         listaAulas = aDHorarios.listarAulasOrdenada(condicion);
                     }
                     else
                     {
+                        if (grupo.Grado == 11)
+                        {
+                            string condicion = " order by nombreMateria desc";
+                            listaMaterias = aDHorarios.listarMateriasOrdenada(condicion);
+                            condicion = " order by tipoAula ";
+                            listaAulas = aDHorarios.listarAulasOrdenada(condicion);
+                        }
+                        else
+                        {
 
-                        string condicion = " ORDER BY tipoAula asc";
-                        listaMaterias = aDHorarios.listarMateriasOrdenada(condicion);
-                        condicion = " order by tipoAula desc ";
-                        listaAulas = aDHorarios.listarAulasOrdenada(condicion);
-                     
+                            string condicion = " ORDER BY tipoAula asc";
+                            listaMaterias = aDHorarios.listarMateriasOrdenada(condicion);
+                            condicion = " order by tipoAula desc ";
+                            listaAulas = aDHorarios.listarAulasOrdenada(condicion);
+
+                        }
                     }
+                    recorrerMaterias(grupo);
                 }
-                recorrerMaterias(grupo);
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
             }
             return "Completado";
         }
 
+        /// <summary>
+        /// Método que recorre las materias para generar el horario. Recibe una clase grupo.
+        /// </summary>
+        /// <param name="grupo"></param>
         private void recorrerMaterias(EGrupo grupo)
         {
             EHorario horario = new EHorario();
@@ -77,6 +96,10 @@ namespace LogicaNegocio
             }
         }
 
+        /// <summary>
+        /// Método que recorre las materias y según el grado envía cantidad de lecciones. Recibe un horario.
+        /// </summary>
+        /// <param name="horario"></param>
         private void recorrerGrado(EHorario horario)
         {
             switch (horario.EGrupo.Grado)
@@ -143,6 +166,13 @@ namespace LogicaNegocio
             }
         }
 
+        /// <summary>
+        ///     Método en cargado de recorrer las cantidad de lecciones necesarias por materia, recibe cantitdad de lecciones, clase horario, cantidad minima de lecciones y tipo de aula.
+        /// </summary>
+        /// <param name="cantidadLecciones"></param>
+        /// <param name="horario"></param>
+        /// <param name="cantidadMinimaLecciones"></param>
+        /// <param name="tipoAula"></param>
         private void buscarLeccionesVacias(int cantidadLecciones, EHorario horario, int cantidadMinimaLecciones, string tipoAula)
         {
             bool campoLeccionEncontrado = false;
@@ -155,6 +185,13 @@ namespace LogicaNegocio
             }
         }
 
+        /// <summary>
+        /// Método que recorre los días para producir el horario. Recibe cantidad minima de lecciones, clase horario y tipo aula.
+        /// </summary>
+        /// <param name="cantidadMinimaLecciones"></param>
+        /// <param name="horario"></param>
+        /// <param name="tipoAula"></param>
+        /// <returns></returns>
         private bool recorrerDias(int cantidadMinimaLecciones, EHorario horario, string tipoAula)
         {
             string[] dias ;
@@ -187,17 +224,18 @@ namespace LogicaNegocio
             return espacioEncontrado;
         }
 
+        /// <summary>
+        /// Método que reccore las lecciones por horario para mandar a buscar espacio.  Recibe cantidad minima de lecciones, clase horario y tipo aula.
+        /// </summary>
+        /// <param name="cantidadMinimaLecciones"></param>
+        /// <param name="horario"></param>
+        /// <param name="tipoAula"></param>
+        /// <returns></returns>
         private bool recorrerLecciones(int cantidadMinimaLecciones, EHorario horario, string tipoAula)
         {
-            string condicion;
             string[,] lecciones;
             if (horario.EGrupo.Grado >= 9 || (horario.EGrupo.Grado == 7 && horario.EGrupo.Seccion == 1)
-
-
-                || (horario.EGrupo.Grado == 7 && horario.EGrupo.Seccion == 2) 
-
-
-                || (horario.EGrupo.Grado == 7 && horario.EGrupo.Seccion == 3) )
+                || (horario.EGrupo.Grado == 7 && horario.EGrupo.Seccion == 2) || (horario.EGrupo.Grado == 7 && horario.EGrupo.Seccion == 3) )
             {
                 lecciones = new string[10, 2]
                 {
@@ -241,25 +279,17 @@ namespace LogicaNegocio
                     case 2:
                         if (i <= 8)
                         {
-                            condicion = $" idGrupo = '{horario.EGrupo.IdGrupo}' AND horaInicio = '{lecciones[i, 0]}' AND horaFin = '{lecciones[i, 1]}' AND dia = '{horario.Dia}'";
-
-                            if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
+                            if (revisarSiGrupoEstaLibre(horario, lecciones[i, 0], lecciones[i, 1]))
                             {
-                                condicion = $" idGrupo = '{horario.EGrupo.IdGrupo}' AND horaInicio = '{lecciones[i + 1, 0]}' AND horaFin = '{lecciones[i + 1, 1]}' AND dia = '{horario.Dia}'";
-
-                                if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
+                                if (revisarSiGrupoEstaLibre(horario, lecciones[i+1, 0], lecciones[i+1, 1]))
                                 {
-
                                     espacioEncontrado = validarAula(horario, lecciones[i, 0], lecciones[i, 1], lecciones[i + 1, 0], lecciones[i + 1, 1], tipoAula);
-
                                 }
-                            }
+                            }                             
                         }
                         break;
                     case 1:
-                         condicion = $" idGrupo = '{horario.EGrupo.IdGrupo}' AND horaInicio = '{lecciones[i, 0]}' AND horaFin = '{lecciones[i, 1]}' AND dia = '{horario.Dia}'";
-
-                        if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
+                        if (revisarSiGrupoEstaLibre(horario, lecciones[i, 0], lecciones[i, 1]))
                         {
                             espacioEncontrado = validarAula(horario, lecciones[i, 0], lecciones[i, 1], tipoAula);
                         }
@@ -268,27 +298,18 @@ namespace LogicaNegocio
                     case 4:
                         if (i < 7)
                         {
-
                             espacioEncontrado = validarEspecialidad(horario, lecciones[i, 0], lecciones[i, 1], lecciones[i + 1, 0], lecciones[i + 1, 1],
                             lecciones[i + 2, 0], lecciones[i + 2, 1], lecciones[i + 3, 0], lecciones[i + 3, 1], tipoAula);
 
                             if (espacioEncontrado == false)
                             {
-                                // Validar que el grupo este libre en las lecciones designadas.
-                                condicion = $" idGrupo = '{horario.EGrupo.IdGrupo}' AND horaInicio = '{lecciones[i, 0]}' AND horaFin = '{lecciones[i, 1]}' AND dia = '{horario.Dia}'";
-
-                                if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
+                                if (revisarSiGrupoEstaLibre(horario, lecciones[i, 0], lecciones[i, 1]))
                                 {
-                                    condicion = $" idGrupo = '{horario.EGrupo.IdGrupo}' AND horaInicio = '{lecciones[i + 1, 0]}' AND horaFin = '{lecciones[i + 1, 1]}' AND dia = '{horario.Dia}'";
-
-                                    if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
+                                    if (revisarSiGrupoEstaLibre(horario, lecciones[i+1, 0], lecciones[i+1, 1]))
                                     {
-                                        condicion = $" idGrupo = '{horario.EGrupo.IdGrupo}' AND horaInicio = '{lecciones[i + 2, 0]}' AND horaFin = '{lecciones[i + 2, 1]}' AND dia = '{horario.Dia}'";
-                                        if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
+                                        if (revisarSiGrupoEstaLibre(horario, lecciones[i+2, 0], lecciones[i+2, 1]))
                                         {
-                                            condicion = $" idGrupo = '{horario.EGrupo.IdGrupo}' AND horaInicio = '{lecciones[i + 3, 0]}' AND horaFin = '{lecciones[i + 3, 1]}' AND dia = '{horario.Dia}'";
-
-                                            if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
+                                            if (revisarSiGrupoEstaLibre(horario, lecciones[i+3, 0], lecciones[i+3, 1]))
                                             {
                                                 espacioEncontrado = validarAula(horario, lecciones[i, 0], lecciones[i, 1], lecciones[i + 1, 0], lecciones[i + 1, 1],
                                                 lecciones[i + 2, 0], lecciones[i + 2, 1], lecciones[i + 3, 0], lecciones[i + 3, 1],
@@ -297,6 +318,7 @@ namespace LogicaNegocio
                                         }
                                     }
                                 }
+
                             }                                                                                                     
                             
                         }
@@ -316,6 +338,38 @@ namespace LogicaNegocio
             return espacioEncontrado;
         }
 
+        /// <summary>
+        /// Método que revisa si el grupo esta libre en una leccion en especifico. Recibe clase horario, horaInicio, horaFinal.
+        /// </summary>
+        /// <param name="horario"></param>
+        /// <param name="leccionIncio"></param>
+        /// <param name="leccionFinal"></param>
+        /// <returns>Bool</returns>
+        private bool revisarSiGrupoEstaLibre(EHorario horario, string leccionIncio, string leccionFinal)
+        {
+            bool retorno = false;
+            string condicion = $" idGrupo = {horario.EGrupo.IdGrupo} AND horaInicio = '{leccionIncio}' AND horaFin = '{leccionFinal}' AND dia = '{horario.Dia}'";
+            if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
+            {
+                retorno = true;
+            }
+            return retorno;
+        }
+
+        /// <summary>
+        /// Método que valida si un grupo ya tiene una especilidad A, para ser asignada la especialidad B . Recibe por 4 lecciones (hora inicio y final) y una clase horario.
+        /// </summary>
+        /// <param name="horario"></param>
+        /// <param name="leccion1Inicio"></param>
+        /// <param name="leccion1Final"></param>
+        /// <param name="leccion2Inicio"></param>
+        /// <param name="leccion2Final"></param>
+        /// <param name="leccion3Inicio"></param>
+        /// <param name="leccion3Final"></param>
+        /// <param name="leccion4Inicio"></param>
+        /// <param name="leccion4Final"></param>
+        /// <param name="tipoAula"></param>
+        /// <returns></returns>
         private bool validarEspecialidad(EHorario horario, string leccion1Inicio, string leccion1Final, string leccion2Inicio, string leccion2Final,
              string leccion3Inicio, string leccion3Final, string leccion4Inicio, string leccion4Final, string tipoAula)
         {
@@ -366,33 +420,31 @@ namespace LogicaNegocio
                 condicion = $" idMateria = {idMateria} AND idGrupo = {horario.EGrupo.IdGrupo} ";
                 if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count > 0)
                 {
-                    condicion = $" idMateria = {idMateria} AND horaInicio = '{leccion1Inicio}' AND horaFin = '{leccion1Final}' AND dia = '{horario.Dia}' AND idGrupo = '{horario.EGrupo.IdGrupo}'";
-                    if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 1)
+                    if (revisarSiMateriaEstaLibre(idMateria,leccion1Inicio, leccion1Final, horario.Dia, 1, horario.EGrupo.IdGrupo))
                     {
-                        condicion = $" idMateria = {idMateria} AND horaInicio = '{leccion2Inicio}' AND horaFin = '{leccion2Final}' AND dia = '{horario.Dia}' AND idGrupo = '{horario.EGrupo.IdGrupo}'";
-                        if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 1)
+                        if (revisarSiMateriaEstaLibre(idMateria, leccion2Inicio, leccion2Final, horario.Dia, 1, horario.EGrupo.IdGrupo))
                         {
-                            condicion = $" idMateria = {idMateria} AND horaInicio = '{leccion3Inicio}' AND horaFin = '{leccion3Final}' AND dia = '{horario.Dia}' AND idGrupo = '{horario.EGrupo.IdGrupo}'";
-                            if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 1)
+                            if (revisarSiMateriaEstaLibre(idMateria, leccion3Inicio, leccion3Final, horario.Dia, 1, horario.EGrupo.IdGrupo))
                             {
-                                condicion = $" idMateria = {idMateria} AND horaInicio = '{leccion4Inicio}' AND horaFin = '{leccion4Final}' AND dia = '{horario.Dia}' AND idGrupo = '{horario.EGrupo.IdGrupo}'";
-                                if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 1)
+                                if (revisarSiMateriaEstaLibre(idMateria, leccion4Inicio, leccion4Final, horario.Dia, 1, horario.EGrupo.IdGrupo))
                                 {
-                                    condicion = $" idMateria = {horario.EMateria.IdMateria} AND horaInicio = '{leccion1Inicio}' AND horaFin = '{leccion1Final}' AND dia = '{horario.Dia}' AND idGrupo = '{horario.EGrupo.IdGrupo}'";
-                                    if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
+                                    if (revisarSiMateriaEstaLibre(idMateria, leccion4Inicio, leccion4Final, horario.Dia, 1, horario.EGrupo.IdGrupo))
                                     {
-                                        condicion = $" idMateria = {horario.EMateria.IdMateria} AND horaInicio = '{leccion2Inicio}' AND horaFin = '{leccion2Final}' AND dia = '{horario.Dia}' AND idGrupo = '{horario.EGrupo.IdGrupo}'";
+                                        condicion = $" idMateria = {horario.EMateria.IdMateria} AND horaInicio = '{leccion1Inicio}' AND horaFin = '{leccion1Final}' AND dia = '{horario.Dia}' AND idGrupo = '{horario.EGrupo.IdGrupo}'";
                                         if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
                                         {
-                                            validarAula(horario, leccion1Inicio, leccion1Final, leccion2Inicio, leccion2Final, leccion3Inicio, leccion3Final, leccion4Inicio, leccion4Final, tipoAula);
-                                            espacioEncontrado = true;
+                                            condicion = $" idMateria = {horario.EMateria.IdMateria} AND horaInicio = '{leccion2Inicio}' AND horaFin = '{leccion2Final}' AND dia = '{horario.Dia}' AND idGrupo = '{horario.EGrupo.IdGrupo}'";
+                                            if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
+                                            {
+                                                validarAula(horario, leccion1Inicio, leccion1Final, leccion2Inicio, leccion2Final, leccion3Inicio, leccion3Final, leccion4Inicio, leccion4Final, tipoAula);
+                                                espacioEncontrado = true;
+                                            }
                                         }
                                     }
-
                                 }
                             }
                         }
-                    }
+                    }                                                 
                 }
             }
 
@@ -401,6 +453,55 @@ namespace LogicaNegocio
             return espacioEncontrado;
         }
 
+        /// <summary>
+        /// Método que revisa si el grupo esta libre en una leccion en especifico. Recibe clase horario, horaInicio, horaFinal.
+        /// </summary>
+        /// <param name="horario"></param>
+        /// <param name="leccionIncio"></param>
+        /// <param name="leccionFinal"></param>
+        /// <returns>Bool</returns>
+        private bool revisarSiMateriaEstaLibre(int idMateria, string leccionIncio, string leccionFinal, string dia, int cantidad, int idGrupo)
+        {
+            bool retorno = false;
+            string condicion = $" idMateria = {idMateria} AND horaInicio = '{leccionIncio}' AND horaFin = '{leccionFinal}' AND dia = '{dia}' AND idGrupo = '{idGrupo}'";
+            if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == cantidad)
+            {
+                retorno = true;
+            }
+            return retorno;
+        }
+
+        /// <summary>
+        /// Método que valida si un aula esta libre. Recibe el idAula, y leccion (hora inicio y final, y el día)
+        /// </summary>
+        /// <param name="horario"></param>
+        /// <param name="leccion1Inicio"></param>
+        /// <param name="leccion1Final"></param>
+        /// <param name="leccion2Inicio"></param>
+        /// <param name="leccion2Final"></param>
+        /// <param name="tipoAula"></param>
+        /// <returns>Bool</returns>
+        private bool revisarSiAulaEstaLibre(int idAula, string leccionIncio, string leccionFinal, string dia)
+        {
+            bool retorno = false;
+            string condicion = $" idAula = {idAula} AND horaInicio = '{leccionIncio}' AND horaFin = '{leccionFinal}' AND dia = '{dia}'";
+            if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
+            {
+                retorno = true;
+            }
+            return retorno;
+        }
+
+        /// <summary>
+        /// Método que valida si las aulas están vacidas en las lecciones solicitadas. Recibe por parámetros dos lecciones (hora inicio y final), y tipo de aula.
+        /// </summary>
+        /// <param name="horario"></param>
+        /// <param name="leccion1Inicio"></param>
+        /// <param name="leccion1Final"></param>
+        /// <param name="leccion2Inicio"></param>
+        /// <param name="leccion2Final"></param>
+        /// <param name="tipoAula"></param>
+        /// <returns></returns>
         private bool validarAula(EHorario horario, string leccion1Inicio, string leccion1Final, string leccion2Inicio, string leccion2Final, string tipoAula)
         {
             bool espacioEncontrado = false;
@@ -408,27 +509,33 @@ namespace LogicaNegocio
 
             while (espacioEncontrado == false && i < listaAulas.Count)
             {
-                string condicion = $" idAula = {listaAulas[i].IdAula} AND horaInicio = '{leccion1Inicio}' AND horaFin = '{leccion1Final}' AND dia = '{horario.Dia}'";
-                if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
+                string condicion = $" and idAula = {listaAulas[i].IdAula} AND tipoAula = '{tipoAula}'";
+                if (aDHorarios.listarAulas(condicion).Count == 1)
                 {
-                    condicion = $" idAula = {listaAulas[i].IdAula} AND horaInicio = '{leccion2Inicio}' AND horaFin = '{leccion2Final}' AND dia = '{horario.Dia}'";
-                    if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
+                    if (revisarSiAulaEstaLibre(listaAulas[i].IdAula, leccion1Inicio, leccion1Final, horario.Dia))
                     {
-                        condicion = $" and idAula = {listaAulas[i].IdAula} AND tipoAula = '{tipoAula}'";
-                        if (aDHorarios.listarAulas(condicion).Count == 1)
+                        if (revisarSiAulaEstaLibre(listaAulas[i].IdAula, leccion2Inicio, leccion2Final, horario.Dia))
                         {
                             horario.EAula = listaAulas[i];
-                            espacioEncontrado = buscarProfesor(horario, leccion1Inicio, leccion1Final,leccion2Inicio,leccion2Final);
-                            ;
+                            espacioEncontrado = buscarProfesor(horario, leccion1Inicio, leccion1Final, leccion2Inicio, leccion2Final);
                         }
-                    }
+                    }                     
                 }
                 i++;
             }
-
             return espacioEncontrado;
         }
 
+        /// <summary>
+        /// Método que valida si las aulas están vacidas en las lecciones solicitadas. Recibe por parámetros 4 lecciones (hora inicio y final), y tipo de aula.
+        /// </summary>
+        /// <param name="horario"></param>
+        /// <param name="leccion1Inicio"></param>
+        /// <param name="leccion1Final"></param>
+        /// <param name="leccion2Inicio"></param>
+        /// <param name="leccion2Final"></param>
+        /// <param name="tipoAula"></param>
+        /// <returns></returns>
         private bool validarAula(EHorario horario, string leccion1Inicio, string leccion1Final, string leccion2Inicio, string leccion2Final,
              string leccion3Inicio, string leccion3Final, string leccion4Inicio, string leccion4Final, string tipoAula)
         {
@@ -440,18 +547,13 @@ namespace LogicaNegocio
                 string condicion = $" and idAula = {listaAulas[i].IdAula} AND tipoAula = '{tipoAula}'";
                 if (aDHorarios.listarAulas(condicion).Count == 1)
                 {
-
-                    condicion = $" idAula = {listaAulas[i].IdAula} AND horaInicio = '{leccion1Inicio}' AND horaFin = '{leccion1Final}' AND dia = '{horario.Dia}'";
-                    if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
+                    if (revisarSiAulaEstaLibre(listaAulas[i].IdAula, leccion1Inicio, leccion1Final, horario.Dia))
                     {
-                        condicion = $" idAula = {listaAulas[i].IdAula} AND horaInicio = '{leccion2Inicio}' AND horaFin = '{leccion2Final}' AND dia = '{horario.Dia}'";
-                        if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
+                        if (revisarSiAulaEstaLibre(listaAulas[i].IdAula, leccion2Inicio, leccion2Final, horario.Dia))
                         {
-                            condicion = $" idAula = {listaAulas[i].IdAula} AND horaInicio = '{leccion3Inicio}' AND horaFin = '{leccion3Final}' AND dia = '{horario.Dia}'";
-                            if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
+                            if (revisarSiAulaEstaLibre(listaAulas[i].IdAula, leccion3Inicio, leccion3Final, horario.Dia))
                             {
-                                condicion = $" idAula = {listaAulas[i].IdAula} AND horaInicio = '{leccion4Inicio}' AND horaFin = '{leccion4Final}' AND dia = '{horario.Dia}'";
-                                if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
+                                if (revisarSiAulaEstaLibre(listaAulas[i].IdAula, leccion4Inicio, leccion4Final, horario.Dia))
                                 {
                                     horario.EAula = listaAulas[i];
                                     espacioEncontrado = buscarProfesor(horario, leccion1Inicio, leccion1Final, leccion2Inicio, leccion2Final,
@@ -461,13 +563,19 @@ namespace LogicaNegocio
                         }
                     }
                 }
-
                 i++;
             }
-
             return espacioEncontrado;   
         }
 
+        /// <summary>
+        /// Método que valida si las aulas están vacidas en las lecciones solicitadas. Recibe por parámetros 1 lecciones (hora inicio y final), y tipo de aula.
+        /// </summary>
+        /// <param name="horario"></param>
+        /// <param name="leccion1Inicio"></param>
+        /// <param name="leccion1Final"></param>
+        /// <param name="tipoAula"></param>
+        /// <returns></returns>
         private bool validarAula(EHorario horario, string leccion1Inicio, string leccion1Final, string tipoAula)
         {
             bool espacioEncontrado = false;
@@ -493,29 +601,51 @@ namespace LogicaNegocio
             return espacioEncontrado;
         }
 
+        /// <summary>
+        /// Metodo que revisa si el profesor esta libre. Recibe el id profesor, una leccion (hora inicio y final).
+        /// </summary>
+        /// <param name="idProfesor"></param>
+        /// <param name="leccionIncio"></param>
+        /// <param name="leccionFinal"></param>
+        /// <param name="dia"></param>
+        /// <returns>Bool</returns>
+        private bool revisarSiProfeEstaLibre(int idProfesor, string leccionIncio, string leccionFinal, string dia)
+        {
+            bool retorno = false;
+            string condicion = $" idProfesor = {idProfesor} AND horaInicio = '{leccionIncio}' AND horaFin = '{leccionFinal}' AND dia = '{dia}'";
+            if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
+            {
+                retorno = true;
+            }
+            return retorno;
+        }
+
+        /// <summary>
+        /// Metodo que revisa y asigna un profesor si esta libre. Recibe por parámetro dos lecciones (incio y final), y clase horario.
+        /// </summary>
+        /// <param name="horario"></param>
+        /// <param name="leccion1Inicio"></param>
+        /// <param name="leccion1Final"></param>
+        /// <param name="leccion2Inicio"></param>
+        /// <param name="leccion2Final"></param>
+        /// <returns></returns>
         private bool buscarProfesor(EHorario horario, string leccion1Inicio, string leccion1Final, string leccion2Inicio, string leccion2Final)
         {
             bool espacioEncontrado = false;
             int i = 0;
-
             while (espacioEncontrado == false && i < listaProfesores.Count)
             {
-
                 // Valida si el profesor es de esa materia
                 string condicion = $" idProfesor = '{listaProfesores[i].Id}' AND idMateria = '{horario.EMateria.IdMateria}'";
                 if (aDHorarios.listarProfesores(condicion).Count > 0)
                 {
                     // Valida que el profesor este libre en la leccion 1.
-                    condicion = $" idProfesor = '{listaProfesores[i].Id}' AND horaInicio = '{leccion1Inicio}' AND horaFin = '{leccion1Final}' AND dia = '{horario.Dia}' ";
-                    if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
+                    if (revisarSiProfeEstaLibre(listaProfesores[i].Id, leccion1Inicio, leccion1Final, horario.Dia))
                     {
-                        // Valida que el profesor este libre en la leccion 2.
-                        condicion = $" idProfesor = '{listaProfesores[i].Id}' AND horaInicio = '{leccion2Inicio}' AND horaFin = '{leccion2Final}' AND dia = '{horario.Dia}'";
-                        if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
+                        if (revisarSiProfeEstaLibre(listaProfesores[i].Id, leccion2Inicio, leccion2Final, horario.Dia))
                         {
                             if (aDHorarios.obtenerLeccionesProfesor(listaProfesores[i]) <= 40)
                             {
-
                                 horario.EProfesor = listaProfesores[i];
                                 horario.HoraInicio = leccion1Inicio;
                                 horario.HoraFinal = leccion1Final;
@@ -523,7 +653,7 @@ namespace LogicaNegocio
                                 horario.HoraInicio = leccion2Inicio;
                                 horario.HoraFinal = leccion2Final;
                                 aDHorarios.insertarHorario(horario);
-                                espacioEncontrado = true;                              
+                                espacioEncontrado = true;
                             }
                             else
                             {
@@ -537,41 +667,60 @@ namespace LogicaNegocio
             return espacioEncontrado;
         }
 
+        /// <summary>
+        /// Metodo que revisa y asigna un profesor si esta libre. Recibe por parámetro 1 leccion (incio y final), y clase horario.
+        /// </summary>
+        /// <param name="horario"></param>
+        /// <param name="leccion1Inicio"></param>
+        /// <param name="leccion1Final"></param>
+        /// <param name="leccion2Inicio"></param>
+        /// <param name="leccion2Final"></param>
+        /// <returns></returns>
         private bool buscarProfesor(EHorario horario, string leccion1Inicio, string leccion1Final)
         {
             bool espacioEncontrado = false;
             int i = 0;
-
             while (espacioEncontrado == false && i < listaProfesores.Count)
             {
-
                 // Valida si el profesor es de esa materia
                 string condicion = $" idProfesor = '{listaProfesores[i].Id}' AND idMateria = '{horario.EMateria.IdMateria}'";
                 if (aDHorarios.listarProfesores(condicion).Count > 0)
                 {
-                    // Valida que el profesor este libre en la leccion 1.
-                    condicion = $" idProfesor = '{listaProfesores[i].Id}' AND horaInicio = '{leccion1Inicio}' AND horaFin = '{leccion1Final}' AND dia = '{horario.Dia}' ";
-                    if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
+                    if (revisarSiProfeEstaLibre(listaProfesores[i].Id, leccion1Inicio, leccion1Final, horario.Dia))
                     {
-                            if (aDHorarios.obtenerLeccionesProfesor(listaProfesores[i]) <= 40)
-                            {
-                                    horario.EProfesor = listaProfesores[i];
-                                    horario.HoraInicio = leccion1Inicio;
-                                    horario.HoraFinal = leccion1Final;
-                                    aDHorarios.insertarHorario(horario);
-                                    espacioEncontrado = true;                                                        
-                            }
-                            else
-                            {
-                                espacioEncontrado = false;
-                            }                       
-                    }
+                        if (aDHorarios.obtenerLeccionesProfesor(listaProfesores[i]) <= 40)
+                        {
+                            horario.EProfesor = listaProfesores[i];
+                            horario.HoraInicio = leccion1Inicio;
+                            horario.HoraFinal = leccion1Final;
+                            aDHorarios.insertarHorario(horario);
+                            espacioEncontrado = true;
+                        }
+                        else
+                        {
+                            espacioEncontrado = false;
+                        }
+                    }                 
                 }
                 i++;
             }
             return espacioEncontrado;
         }
 
+
+        /// <summary>
+        /// Metodo que revisa y asigna un profesor si esta libre. Recibe por parámetro 4 lecciones (incio y final), y clase horario.
+        /// </summary>
+        /// <param name="horario"></param>
+        /// <param name="leccion1Inicio"></param>
+        /// <param name="leccion1Final"></param>
+        /// <param name="leccion2Inicio"></param>
+        /// <param name="leccion2Final"></param>
+        /// <param name="leccion3Inicio"></param>
+        /// <param name="leccion3Final"></param>
+        /// <param name="leccion4Inicio"></param>
+        /// <param name="leccion4Final"></param>
+        /// <returns></returns>
         private bool buscarProfesor(EHorario horario, string leccion1Inicio, string leccion1Final, string leccion2Inicio, string leccion2Final,
              string leccion3Inicio, string leccion3Final, string leccion4Inicio, string leccion4Final)
         {
@@ -585,21 +734,13 @@ namespace LogicaNegocio
                 string condicion = $" idProfesor = '{listaProfesores[i].Id}' AND idMateria = '{horario.EMateria.IdMateria}'";
                 if (aDHorarios.listarProfesores(condicion).Count > 0)
                 {
-                    // Valida que el profesor este libre en la leccion 1.
-                    condicion = $" idProfesor = '{listaProfesores[i].Id}' AND horaInicio = '{leccion1Inicio}' AND horaFin = '{leccion1Final}' AND dia = '{horario.Dia}' ";
-                    if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
+                    if (revisarSiProfeEstaLibre(listaProfesores[i].Id, leccion1Inicio, leccion1Final, horario.Dia))
                     {
-                        // Valida que el profesor este libre en la leccion 2.
-                        condicion = $" idProfesor = '{listaProfesores[i].Id}' AND horaInicio = '{leccion2Inicio}' AND horaFin = '{leccion2Final}' AND dia = '{horario.Dia}'";
-                        if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
+                        if (revisarSiProfeEstaLibre(listaProfesores[i].Id, leccion2Inicio, leccion2Final, horario.Dia))
                         {
-                            // Valida que el profesor este libre en la leccion 3.
-                            condicion = $" idProfesor = '{listaProfesores[i].Id}' AND horaInicio = '{leccion3Inicio}' AND horaFin = '{leccion3Final}' AND dia = '{horario.Dia}' ";
-                            if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
+                            if (revisarSiProfeEstaLibre(listaProfesores[i].Id, leccion3Inicio, leccion3Final, horario.Dia))
                             {
-                                // Valida que el profesor este libre en la leccion 4.
-                                condicion = $" idProfesor = '{listaProfesores[i].Id}' AND horaInicio = '{leccion4Inicio}' AND horaFin = '{leccion4Final}' AND dia = '{horario.Dia}'";
-                                if (aDHorarios.obtenerTablaHorarios(condicion).Tables[0].Rows.Count == 0)
+                                if (revisarSiProfeEstaLibre(listaProfesores[i].Id, leccion4Inicio, leccion4Final, horario.Dia))
                                 {
                                     horario.EProfesor = listaProfesores[i];
                                     horario.HoraInicio = leccion1Inicio;
@@ -614,7 +755,7 @@ namespace LogicaNegocio
                                     horario.HoraInicio = leccion4Inicio;
                                     horario.HoraFinal = leccion4Final;
                                     aDHorarios.insertarHorario(horario);
-                                    espacioEncontrado = true;                                                                                                                                                              
+                                    espacioEncontrado = true;                                    
                                 }
                             }
                         }
@@ -625,29 +766,18 @@ namespace LogicaNegocio
             return espacioEncontrado;
         }
 
-        public EHorario devolverHorario(string condicion)
+        /// <summary>
+        /// Metodo que retorna una lista con el horario de un dia. Recibe el grado, seccion, año, y una condicion alternativa.
+        /// </summary>
+        /// <param name="grado"></param>
+        /// <param name="seccion"></param>
+        /// <param name="anio"></param>
+        /// <param name="dia"></param>
+        /// <param name="condicion2"></param>
+        /// <returns>Lista string con horario de un dia</returns>
+        public List<string> listaHorario(int grado, int seccion, int anio, string dia, string condicion2 = "")
         {
-            EHorario horario;
-
-            ADHorarios aDHorarios = new ADHorarios(cadConexion);
-
-            try
-            {
-                horario = aDHorarios.devolverHorario(condicion);
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-
-            return horario;
-        }
-
-
-        public List<EHorario> listaHorario(int grado, int seccion, int anio, string dia, string condicion2 = "")
-        {
-            List<EHorario> listaHorarios = new List<EHorario>();
+            List<string> listaHorarios = new List<string>();
 
             string[,] lecciones;
             lecciones = new string[10, 2]
@@ -672,13 +802,32 @@ namespace LogicaNegocio
                 {
                     condicion = string.Format("{0} {1}", condicion, condicion2);
                 }
+                eHorario = aDHorarios.devolverHorario(condicion);
 
-                if (aDHorarios.devolverHorario(condicion) != null)
+                if (eHorario.ToString() != "Lección libre")
                 {
-                    eHorario = aDHorarios.devolverHorario(condicion);
+                    listaHorarios.Add(" Aula:" + eHorario.EAula.CodigoAula);
+                    listaHorarios.Add(" Profesor:" + eHorario.EProfesor.Nombre + " " + eHorario.EProfesor.Apellido1);
+                    listaHorarios.Add(" Materia: " + eHorario.EMateria.NombreMateria);
+                }
+                else
+                {
+                    listaHorarios.Add(" ");
+                    listaHorarios.Add(" ");
+                    listaHorarios.Add(" ");
+                }
+                switch (i)
+                {
+                    case 1:
+                    case 3:
+                    case 7:
+                        listaHorarios.Add(" Recreo");
+                        break;
+                    case 5:
+                        listaHorarios.Add(" Almuerzo");
+                        break;
                 }
 
-                listaHorarios.Add(eHorario);
             }
 
 
@@ -687,34 +836,113 @@ namespace LogicaNegocio
         return listaHorarios;
         }
 
+        /// <summary>
+        /// Metodo que retorna las lista de los grupo. Recibe un condicion alternativa.
+        /// </summary>
+        /// <param name="condicion"></param>
+        /// <returns>Lista string</returns>
+        public List<EGrupo> listarGrupos(string condicion = "")
+        {
+            List<EGrupo> listaGrupos;
 
-
-        /*        public void ingresarLeccion()
-        {          //EHorario horario
             try
             {
-                if (Horarios == null)
-                {
-                    setHorarios = aDHorarios.obtenerTablaHorarios();
-                    Horarios = setHorarios.Tables[0];
-                }         
-                //DataRow row = Horarios.NewRow();
-                //row["idMateria"] = horario.EMateria.IdMateria;
-                //row["idProfesor"] = horario.EProfesor.Id;
-                //row["dia"] = horario.Dia;
-                //row["horaInicio"] = horario.HoraInicio;
-                //row["horaFin"] = horario.HoraFinal;
-                //row["idAula"] = horario.EAula.IdAula;
-                //row["idGrupo"] = horario.EGrupo.IdGrupo;
-                //Horarios.Rows.Add(row);
-                validarAula();
-                aDHorarios.actualizarDataSet(setHorarios);
+                listaGrupos = aDHorarios.listarGrupos(condicion);
             }
             catch (Exception ex)
             {
+
                 throw ex;
             }
 
-        }*/
+            return listaGrupos;
+        }
+
+        /// <summary>
+        /// Metodo que retorna un data set con los horarios. Recibe un condicion alternativa.
+        /// </summary>
+        /// <param name="condicion"></param>
+        /// <returns>Data set</returns>
+        public DataSet obtenerTablaHorarios(string condicion = "")
+        {
+            DataSet setHorario;
+            try
+            {
+                setHorario = aDHorarios.obtenerTablaHorarios(condicion);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+            return setHorario;
+        }
+
+        /// <summary>
+        /// Metodo que retorna las lista de los materias. Recibe un condicion alternativa.
+        /// </summary>
+        /// <param name="condicion"></param>
+        /// <returns>Lista clase materia</returns>
+        public List<EMateria> listarMaterias(string condicion = "")
+        {
+            List<EMateria> listaM ;
+
+            try
+            {
+                listaM = aDHorarios.listarMaterias(condicion);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+            return listaM;
+        }
+
+        /// <summary>
+        /// Metodo que retorna las lista de los profesores. Recibe un condicion alternativa.
+        /// </summary>
+        /// <param name="condicion"></param>
+        /// <returns>Lista profesores</returns>
+        public List<EProfesor> listarProfesores(string condicion = "")
+        {
+            List<EProfesor> listaP;
+
+            try
+            {
+                listaP = aDHorarios.listarProfesores(condicion);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+            return listaP;
+        }
+
+        /// <summary>
+        /// Metodo que retorna las lista de las aulas. Recibe un condicion alternativa.
+        /// </summary>
+        /// <param name="condicion"></param>
+        /// <returns>Lista aulas</returns>
+        public List<EAula> listarAulas(string condicion = "")
+        {
+            List<EAula> listaA;
+
+            try
+            {
+                listaA = aDHorarios.listarAulas(condicion);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+            return listaA;
+        }
     }
 }
