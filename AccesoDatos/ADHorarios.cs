@@ -9,7 +9,6 @@ namespace AccesoDatos
 {
     public class ADHorarios
     {
-       // string mensaje;
 
         string cadConexion;
 
@@ -436,7 +435,7 @@ namespace AccesoDatos
             string mensaje;
             string sentencia = "EliminarHorario";
             SqlConnection connection = new SqlConnection(cadConexion);
-            SqlCommand comando = new SqlCommand(sentencia, connection);
+            SqlCommand comando = new SqlCommand(sentencia, connection);     
             comando.CommandType = CommandType.StoredProcedure;
             comando.Parameters.AddWithValue("@IdGrupo", horario.EGrupo.IdGrupo);
             comando.Parameters.Add("@msj", SqlDbType.VarChar, 100).Direction = ParameterDirection.Output;

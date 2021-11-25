@@ -99,7 +99,7 @@ namespace FabricioCespedesProyectoFase2
         {
             List<string> listaHoras = new List<string>();
             string[,] lecciones;
-            lecciones = new string[10, 2]
+            lecciones = new string[10,2]
             {
                 { "07:20", "08:00" },
                 { "08:00", "08:40" },
@@ -387,11 +387,6 @@ namespace FabricioCespedesProyectoFase2
 
         }
 
-        private void lvHorarios_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void btnBorrarHorarios_Click(object sender, EventArgs e)
         {
             int anio;
@@ -432,6 +427,11 @@ namespace FabricioCespedesProyectoFase2
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        private void lvHorarios_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        {
+            MessageBox.Show("Hola");
         }
     }
 }

@@ -11,6 +11,11 @@ namespace Entidades
         private int borrado;
         private string tipoAula;
 
+        public override string ToString()
+        {
+            return nombreMateria;
+        }
+
         public int IdMateria { get => idMateria; set => idMateria = value; }
         public string NombreMateria { get => nombreMateria; set => nombreMateria = value; }
         public int Borrado { get => borrado; set => borrado = value; }

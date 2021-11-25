@@ -1,4 +1,4 @@
-﻿using System;
+﻿    using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,8 +6,8 @@ namespace Entidades
 {
     public class EPersona
     {
-        private int id;
-        private string identificion;
+        private int id; // 
+        private string identificion; // 
         private string nombre;
         private string apellido1;
         private string apellido2;
@@ -16,8 +16,8 @@ namespace Entidades
         private string telefono;
         private string telefono2;
         private string correo;
-        private string direccion;
-        private int idDistrito;
+        private string direccion;// 
+        private int idDistrito;//
 
         public int Id { get => id; set => id = value; }
         public string Identificion { get => identificion; set => identificion = value; }
