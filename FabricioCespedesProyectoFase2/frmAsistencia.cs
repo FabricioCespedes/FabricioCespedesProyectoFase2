@@ -153,7 +153,6 @@ namespace FabricioCespedesProyectoFase2
             string condicion = $" g.seccion = {subs[1]} and g.grado = {subs[0]} and g.anio = {subs2[0]} and h.dia = '{dia}' and m.nombreMateria =  '{materia}'";
             cbxLecciones.DataSource = lNAsistencia.listarHorario(condicion);
 
-
         }
 
         private bool cargarMaterias(string[] subs, string[] subs2, string dia)

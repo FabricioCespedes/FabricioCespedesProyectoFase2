@@ -11,11 +11,20 @@ namespace AccesoDatos
     {
         string cadConexion;
 
+        /// <summary>
+        /// Constructor vacio de la capa de acceso a datos de asistencia, recibe la conexion.
+        /// </summary>
+        /// <param name="cadConexion"></param>
         public ADAsistencia(string cadConexion)
         {
             this.cadConexion = cadConexion;
         }
 
+        /// <summary>
+        /// Método que obtiene la lista de materias desde la base de datos. Recibe un condicion opcional.
+        /// </summary>
+        /// <param name="condicion"></param>
+        /// <returns>Lista de materias</returns>
         public List<EMateria> listarMaterias(string condicion = "")
         {
             List<EMateria> listaMaterias = new List<EMateria>();
@@ -58,6 +67,11 @@ namespace AccesoDatos
             return listaMaterias;
         }
 
+        /// <summary>
+        /// Método que retorna una lista de horarios desde la base de dadtos. Recibe un string opcional.
+        /// </summary>
+        /// <param name="condicion"></param>
+        /// <returns></returns>
         public List<string> listarHorario(string condicion = "")
         {
             List<string> listaHorario = new List<string>();
@@ -99,6 +113,11 @@ namespace AccesoDatos
             return listaHorario;
         }
 
+        /// <summary>
+        /// Método que retorna una lista de estudiantes desde la base de datos. Recibe un string opcional.
+        /// </summary>
+        /// <param name="condicion"></param>
+        /// <returns>Lista estudiantes</returns>
         public List<EEstudiante> listarEstudiantes(string condicion = "")
         {
             List<EEstudiante> listaEstudiantes = new List<EEstudiante>();
@@ -147,6 +166,11 @@ namespace AccesoDatos
             return listaEstudiantes;
         }
 
+        /// <summary>
+        /// Método que retorna una lista de grupo desde la base de datos. Recibe un string opcional.
+        /// </summary>
+        /// <param name="condicion"></param>
+        /// <returns>Lista de grupos</returns>
         public List<EGrupo> listarGrupos(string condicion = "")
         {
             List<EGrupo> listaGrupos = new List<EGrupo>();
@@ -190,6 +214,11 @@ namespace AccesoDatos
             return listaGrupos;
         }
 
+        /// <summary>
+        /// Método que retorna un dataset con la tabla horarios desde la base de datos, recibe un string opcional
+        /// </summary>
+        /// <param name="condicion"></param>
+        /// <returns>dataset de tabla horarios</returns>
         public DataSet obtenerTablaHorarios(string condicion = "")
         {
             DataSet tablaHorarios = new DataSet();
@@ -222,6 +251,11 @@ namespace AccesoDatos
             return tablaHorarios;
         }
 
+        /// <summary>
+        /// Método que retorna una lección desde la base de datos, recibe un string opcional.
+        /// </summary>
+        /// <param name="condicion"></param>
+        /// <returns>Una lección</returns>
         public EHorario devolverHorario(string condicion)
         {
             EHorario horario = new EHorario();
@@ -258,6 +292,11 @@ namespace AccesoDatos
             return horario;
         }
 
+        /// <summary>
+        /// Método que retorna una asistencia desde la base de datos, recibe un string opcional.
+        /// </summary>
+        /// <param name="condicion"></param>
+        /// <returns>Una asistencia</returns>
         public EAsistencia devolverAsistencia(string condicion)
         {
             EAsistencia eAsistencia = new EAsistencia();
@@ -295,6 +334,11 @@ namespace AccesoDatos
             return eAsistencia;
         }
 
+        /// <summary>
+        /// Método que actualiza una asistencia en la base de datos, recibe una asistencia.
+        /// </summary>
+        /// <param name="asistencia"></param>
+        /// <returns>Un entero</returns>
         public int modificar(EAsistencia asistencia)
         {
             int resultado = -1;
@@ -326,6 +370,11 @@ namespace AccesoDatos
             return resultado;
         }
 
+        /// <summary>
+        /// Métedo que inserta una asistencia en la base de datos, recibe una asistencia.
+        /// </summary>
+        /// <param name="asistencia"></param>
+        /// <returns>Un entero</returns>
         public int insertarAsistencia(EAsistencia asistencia)
         {
             int resultado = -1;

@@ -16,7 +16,7 @@ namespace FabricioCespedesProyectoFase2
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new frmAsistencia());
+            Application.Run(new frmMenuPrincipal());
         }
     }
 }

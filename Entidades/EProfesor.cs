@@ -36,6 +36,11 @@ namespace Entidades
             this.eMateria = eMateria;
         }
 
+        public override string ToString()
+        {
+            return "Id:" + Identificion + "- Nombre:" + Nombre + " " + Apellido1 ;
+        }
+
         public EMateria EMateria { get => eMateria; set => eMateria = value; }
     }
 }

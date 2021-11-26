@@ -113,17 +113,19 @@ namespace FabricioCespedesProyectoFase2
             this.colMiercoles,
             this.colJueves,
             this.colViernes});
-            this.lvHorarios.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lvHorarios.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lvHorarios.GridLines = true;
-            this.lvHorarios.Location = new System.Drawing.Point(12, 95);
+            this.lvHorarios.HideSelection = false;
+            this.lvHorarios.Location = new System.Drawing.Point(3, 95);
             this.lvHorarios.MultiSelect = false;
             this.lvHorarios.Name = "lvHorarios";
             this.lvHorarios.ShowItemToolTips = true;
-            this.lvHorarios.Size = new System.Drawing.Size(1360, 642);
+            this.lvHorarios.Size = new System.Drawing.Size(1355, 550);
             this.lvHorarios.TabIndex = 6;
             this.lvHorarios.UseCompatibleStateImageBehavior = false;
             this.lvHorarios.View = System.Windows.Forms.View.Details;
             this.lvHorarios.VirtualListSize = 3;
+            this.lvHorarios.Visible = false;
             this.lvHorarios.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.lvHorarios_ItemSelectionChanged);
             // 
             // colLunes

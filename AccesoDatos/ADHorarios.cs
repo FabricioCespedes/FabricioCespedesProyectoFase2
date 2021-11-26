@@ -12,11 +12,20 @@ namespace AccesoDatos
 
         string cadConexion;
 
+        /// <summary>
+        /// Constructor de la capa de acceso a datos de los horarios, recibe la conexión a la base de datos por parámetro.
+        /// </summary>
+        /// <param name="cadConexion"></param>
         public ADHorarios(string cadConexion)
         {
             this.cadConexion = cadConexion;
         }
 
+        /// <summary>
+        /// Método que retorna una lista de aulas extraidas desde la base de datos. Recibe un string opcional.
+        /// </summary>
+        /// <param name="condicion"></param>
+        /// <returns>Lista de aulas</returns>
         public List<EAula> listarAulas(string condicion = "")
         {
             List<EAula> listaAulas = new List<EAula>();
@@ -62,6 +71,12 @@ namespace AccesoDatos
 
             return listaAulas;
         }
+
+        /// <summary>
+        /// Método que retorna las lista de aulas ordenadas desde la base de datos. Recibe por parámetro un string opcional.
+        /// </summary>
+        /// <param name="condicion"></param>
+        /// <returns></returns>
         public List<EAula> listarAulasOrdenada(string condicion = "")
         {
             List<EAula> listaAulas = new List<EAula>();
@@ -107,6 +122,12 @@ namespace AccesoDatos
 
             return listaAulas;
         }
+
+        /// <summary>
+        /// Método que retorna las materias desde la base de datos, recibe un string opcional que seria la condicion del select.
+        /// </summary>
+        /// <param name="condicion"></param>
+        /// <returns>Lista de materias</returns>
         public List<EMateria> listarMaterias(string condicion = "")
         {
             List<EMateria> listaMaterias = new List<EMateria>();
@@ -151,6 +172,11 @@ namespace AccesoDatos
             return listaMaterias;
         }
 
+        /// <summary>
+        /// Método que retorna una lista de materias ordenadas desde la base de datos, recibe un string opcional que seria la condicion del select.
+        /// </summary>
+        /// <param name="condicion"></param>
+        /// <returns>Lista de maeterias ordenardas</returns>
         public List<EMateria> listarMateriasOrdenada(string condicion = "")
         {
             List<EMateria> listaMaterias = new List<EMateria>();
@@ -195,6 +221,11 @@ namespace AccesoDatos
             return listaMaterias;
         }
        
+       /// <summary>
+       /// Método que retorna un horario desde la base de datos, recibe un string como parámetro.
+       /// </summary>
+       /// <param name="condicion"></param>
+       /// <returns>Un horario</returns>
         public EHorario devolverHorario(string condicion)
         {
             EHorario horario = new EHorario();
@@ -247,6 +278,11 @@ namespace AccesoDatos
             return horario;
         }
 
+        /// <summary>
+        /// Método que retorna una lista de grupos  desde la base de datos, recibe un string opcional que seria la condicion del select.
+        /// </summary>
+        /// <param name="condicion"></param>
+        /// <returns>Retorna una lista</returns>
         public List<EGrupo> listarGrupos(string condicion = "")
         {
             List<EGrupo> listaGrupos = new List<EGrupo>();
@@ -289,7 +325,12 @@ namespace AccesoDatos
             }
             return listaGrupos;
         }
-   
+
+        /// <summary>
+        /// Método que retorna una lista de profesores desde la base de datos, recibe un string opcional que seria la condicion del select.
+        /// </summary>
+        /// <param name="condicion"></param>
+        /// <returns></returns>
         public List<EProfesor> listarProfesores(string condicion = "")
         {
             List<EProfesor> listaProfesores = new List<EProfesor>();

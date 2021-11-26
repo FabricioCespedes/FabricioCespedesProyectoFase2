@@ -27,6 +27,7 @@ namespace FabricioCespedesProyectoFase2
             
             try
             {
+                lvHorarios.Visible = true;
                 string condicion2 = $" grado= {grado} and seccion = {seccion} AND anio = {anio} ";
                 if (lNHorarios.listarGrupos(condicion2).Count > 0)
                 {
