@@ -373,8 +373,13 @@ namespace AccesoDatos
             }
 
             return listaProfesores;
-        }   
+        }
 
+        /// <summary>
+        /// Método que obtiene la tabla horarios desde la base de datos, recibe un string opcional que seria la condicion del select.
+        /// </summary>
+        /// <param name="condicion"></param>
+        /// <returns>Tabla horarios en formato dataset</returns>
         public DataSet obtenerTablaHorarios(string condicion = "")
         {
             DataSet tablaHorarios = new DataSet();
@@ -407,6 +412,11 @@ namespace AccesoDatos
             return tablaHorarios;
         }
 
+        /// <summary>
+        /// Método que inserta un horario en la base de datos. Recibe por parámetro un horario.
+        /// </summary>
+        /// <param name="horario"></param>
+        /// <returns>Entero</returns>
         public int insertarHorario(EHorario horario)
         {
             int resultado = -1;
@@ -442,6 +452,11 @@ namespace AccesoDatos
 
         }
 
+        /// <summary>
+        /// Método que retorna la cantidad de lecciones del profesor, recibe por parámetro un profesor.
+        /// </summary>
+        /// <param name="profesor"></param>
+        /// <returns>Entero</returns>
         public int obtenerLeccionesProfesor(EProfesor profesor)
         {
             int resultado = 0;
@@ -471,6 +486,11 @@ namespace AccesoDatos
             return resultado;
         }
 
+        /// <summary>
+        /// Método que ejecuta un procedimiento almacenado para eliminar un horario.
+        /// </summary>
+        /// <param name="horario"></param>
+        /// <returns></returns>
         public string eliminarProcedure(EHorario horario)
         {
             string mensaje;
