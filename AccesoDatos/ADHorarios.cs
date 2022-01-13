@@ -463,7 +463,7 @@ namespace AccesoDatos
             SqlCommand comandoSQL = new SqlCommand();
             SqlConnection conexionSQL = new SqlConnection(cadConexion);
 
-            comandoSQL.CommandText = "SELECT COUNT(DATEDIFF(minute, h.horaInicio, h.horaFin)/40) FROM Profesores p INNER JOIN dbo.Horarios h ON p.idProfesor = h.idProfesor WHERE P.idProfesor= @idProfesor HAVING COUNT(DATEDIFF(minute, h.horaInicio, h.horaFin)/40) <  40;";
+            comandoSQL.CommandText = "SELECT COUNT(DATEDIFF(minute, h.horaInicio, h.horaFin)/40) FROM Profesores p INNER JOIN dbo.Horarios h ON p.idProfesor = h.idProfesor WHERE P.idProfesor= @idProfesor";
             comandoSQL.Parameters.AddWithValue("@idProfesor", profesor.Id);
             comandoSQL.Connection = conexionSQL;
             try
@@ -519,6 +519,51 @@ namespace AccesoDatos
             }
 
             return mensaje;
+        }
+
+        /// <summary>
+        /// Método que retorna un profesor de un grupo desde la base de datos, recibe un string como parámetro.
+        /// </summary>
+        /// <param name="condicion"></param>
+        /// <returns>Un horario</returns>
+        public EProfesor devolverProfesorPorGrupo(string condicion)
+        {
+            EProfesor eProfesor = new EProfesor();
+            string sentencia = $" SELECT p.idProfesor, p.nombreProfe , p.apellido1Profe from horarios h join Profesores p ON h.idProfesor = p.idProfesor " + $" WHERE {condicion}";
+
+            SqlConnection connection = new SqlConnection(cadConexion);
+
+            SqlCommand comando = new SqlCommand(sentencia, connection);
+
+            SqlDataReader sqlDataReader;
+
+            try
+            {
+                connection.Open();
+
+                sqlDataReader = comando.ExecuteReader();
+
+                if (sqlDataReader.HasRows)
+                {
+                    sqlDataReader.Read();
+
+                    eProfesor.Id = Convert.ToInt32(sqlDataReader[0]);
+
+                    eProfesor.Nombre = sqlDataReader.GetString(1);
+
+                    eProfesor.Apellido1 = sqlDataReader.GetString(2);
+                }
+
+                connection.Close();
+            }
+            catch (Exception)
+            {
+                connection.Close();
+                throw new Exception("Ha ocurrido un problema en la seleccion de el profesor de un grupo");
+            }
+            finally { connection.Dispose(); comando.Dispose(); }
+
+            return eProfesor;
         }
     }
 }

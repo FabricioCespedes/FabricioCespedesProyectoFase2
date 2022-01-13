@@ -17,7 +17,7 @@ namespace LogicaNegocio
         List<EMateria> listaMaterias;
         List<EProfesor> listaProfesores;
         List<EAula> listaAulas;
-
+        int cantidadLeccionesRequeridas = 0;
         /// <summary>
         /// Constructor de la lógica de negocio de laclase Horarios. Recibe 
         /// </summary>
@@ -176,6 +176,7 @@ namespace LogicaNegocio
         private void buscarLeccionesVacias(int cantidadLecciones, EHorario horario, int cantidadMinimaLecciones, string tipoAula)
         {
             bool campoLeccionEncontrado = false;
+            cantidadLeccionesRequeridas = cantidadLecciones;
             while (cantidadLecciones > 0)
             {
                 campoLeccionEncontrado =  recorrerDias(cantidadMinimaLecciones, horario, tipoAula);
@@ -212,14 +213,36 @@ namespace LogicaNegocio
                     dias = new string[] { "L", "K", "M", "J", "V" };
                 }
             }
+            if (horario.EGrupo.Grado == 7 )
+            {
+                dias = new string[] { "V", "L", "K", "J", "M" };
+
+            }
             bool espacioEncontrado = false;
             int i = 0;
 
             while (espacioEncontrado == false && i <= 4)
             {
-                horario.Dia = dias[i];
-                espacioEncontrado = recorrerLecciones(cantidadMinimaLecciones, horario, tipoAula);
-                i++;
+                if (horario.EMateria.NombreMateria == "Contabilidad" || horario.EMateria.NombreMateria == "Computacion" && horario.EGrupo.Grado > 9)
+                {
+                    if (aDHorarios.obtenerTablaHorarios($" idMateria = { horario.EMateria.IdMateria } and idGrupo = { horario.EGrupo.IdGrupo} and dia = '{ dias[i]}' ").Tables[0].Rows.Count < 4  )
+                    {
+                        horario.Dia = dias[i];
+                        espacioEncontrado = recorrerLecciones(cantidadMinimaLecciones, horario, tipoAula);
+                        i++;
+                    }
+                    else
+                    {
+                        i++;
+                    }
+                }
+                else
+                {
+                    horario.Dia = dias[i];
+                    espacioEncontrado = recorrerLecciones(cantidadMinimaLecciones, horario, tipoAula);
+                    i++;
+                }
+
             }
             return espacioEncontrado;
         }
@@ -633,37 +656,74 @@ namespace LogicaNegocio
         {
             bool espacioEncontrado = false;
             int i = 0;
-            while (espacioEncontrado == false && i < listaProfesores.Count)
+            horario.EProfesor = aDHorarios.devolverProfesorPorGrupo($" h.idGrupo = {horario.EGrupo.IdGrupo} and h.idMateria = {horario.EMateria.IdMateria} ");
+            // Si el profesor cuenta con las cantidad de horas necesarias para dar las lecciones que corresponde a dicha ma
+            if (horario.EProfesor.Nombre != null)
             {
-                // Valida si el profesor es de esa materia
-                string condicion = $" idProfesor = '{listaProfesores[i].Id}' AND idMateria = '{horario.EMateria.IdMateria}'";
-                if (aDHorarios.listarProfesores(condicion).Count > 0)
+                // Valida que el profesor este libre en la leccion 1.
+                if (revisarSiProfeEstaLibre(listaProfesores[i].Id, leccion1Inicio, leccion1Final, horario.Dia))
                 {
-                    // Valida que el profesor este libre en la leccion 1.
-                    if (revisarSiProfeEstaLibre(listaProfesores[i].Id, leccion1Inicio, leccion1Final, horario.Dia))
+                    if (revisarSiProfeEstaLibre(listaProfesores[i].Id, leccion2Inicio, leccion2Final, horario.Dia))
                     {
-                        if (revisarSiProfeEstaLibre(listaProfesores[i].Id, leccion2Inicio, leccion2Final, horario.Dia))
+                        if (aDHorarios.obtenerLeccionesProfesor(listaProfesores[i]) <= 40)
                         {
-                            if (aDHorarios.obtenerLeccionesProfesor(listaProfesores[i]) <= 40)
-                            {
-                                horario.EProfesor = listaProfesores[i];
-                                horario.HoraInicio = leccion1Inicio;
-                                horario.HoraFinal = leccion1Final;
-                                aDHorarios.insertarHorario(horario);
-                                horario.HoraInicio = leccion2Inicio;
-                                horario.HoraFinal = leccion2Final;
-                                aDHorarios.insertarHorario(horario);
-                                espacioEncontrado = true;
-                            }
-                            else
-                            {
-                                espacioEncontrado = false;
-                            }
+                            horario.HoraInicio = leccion1Inicio;
+                            horario.HoraFinal = leccion1Final;
+                            aDHorarios.insertarHorario(horario);
+                            horario.HoraInicio = leccion2Inicio;
+                            horario.HoraFinal = leccion2Final;
+                            aDHorarios.insertarHorario(horario);
+                            espacioEncontrado = true;
+                        }
+                        else
+                        {
+                            espacioEncontrado = false;
                         }
                     }
                 }
-                i++;
+
             }
+            else
+            {
+                while (espacioEncontrado == false && i < listaProfesores.Count)
+                {
+                    // Valida si el profesor es de esa materia
+                    string condicion = $" idProfesor = '{listaProfesores[i].Id}' AND idMateria = '{horario.EMateria.IdMateria}'";
+                    if (aDHorarios.listarProfesores(condicion).Count > 0)
+                    {
+                        // Valida que un profesor pueda dar la clases necesarias a un grupo en especial previniendo que un grupo tenga dos profesores por materia.
+                        int cantidadLeccionesAsignadas = aDHorarios.obtenerLeccionesProfesor(listaProfesores[i]);
+                        if (cantidadLeccionesAsignadas + cantidadLeccionesRequeridas <= 40)
+                        {
+                            // Valida que el profesor este libre en la leccion 1.
+                            if (revisarSiProfeEstaLibre(listaProfesores[i].Id, leccion1Inicio, leccion1Final, horario.Dia))
+                            {
+                                if (revisarSiProfeEstaLibre(listaProfesores[i].Id, leccion2Inicio, leccion2Final, horario.Dia))
+                                {
+                                    if (aDHorarios.obtenerLeccionesProfesor(listaProfesores[i]) <= 40)
+                                    {
+                                        horario.EProfesor = listaProfesores[i];
+                                        horario.HoraInicio = leccion1Inicio;
+                                        horario.HoraFinal = leccion1Final;
+                                        aDHorarios.insertarHorario(horario);
+                                        horario.HoraInicio = leccion2Inicio;
+                                        horario.HoraFinal = leccion2Final;
+                                        aDHorarios.insertarHorario(horario);
+                                        espacioEncontrado = true;
+                                    }
+                                    else
+                                    {
+                                        espacioEncontrado = false;
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                    i++;
+                }
+            }
+
             return espacioEncontrado;
         }
 
@@ -680,29 +740,59 @@ namespace LogicaNegocio
         {
             bool espacioEncontrado = false;
             int i = 0;
-            while (espacioEncontrado == false && i < listaProfesores.Count)
+
+            horario.EProfesor = aDHorarios.devolverProfesorPorGrupo( $" h.idGrupo = {horario.EGrupo.IdGrupo} and h.idMateria = {horario.EMateria.IdMateria} ");
+            // Si el profesor cuenta con las cantidad de horas necesarias para dar las lecciones que corresponde a dicha ma
+            if (horario.EProfesor.Nombre != null)
             {
-                // Valida si el profesor es de esa materia
-                string condicion = $" idProfesor = '{listaProfesores[i].Id}' AND idMateria = '{horario.EMateria.IdMateria}'";
-                if (aDHorarios.listarProfesores(condicion).Count > 0)
+                if (revisarSiProfeEstaLibre(listaProfesores[i].Id, leccion1Inicio, leccion1Final, horario.Dia))
                 {
-                    if (revisarSiProfeEstaLibre(listaProfesores[i].Id, leccion1Inicio, leccion1Final, horario.Dia))
+                    int cantidadLeccionesAsignadas = aDHorarios.obtenerLeccionesProfesor(listaProfesores[i]);
+                    if (cantidadLeccionesAsignadas <= 40)
                     {
-                        if (aDHorarios.obtenerLeccionesProfesor(listaProfesores[i]) <= 40)
-                        {
-                            horario.EProfesor = listaProfesores[i];
-                            horario.HoraInicio = leccion1Inicio;
-                            horario.HoraFinal = leccion1Final;
-                            aDHorarios.insertarHorario(horario);
-                            espacioEncontrado = true;
-                        }
-                        else
-                        {
-                            espacioEncontrado = false;
-                        }
-                    }                 
+                        horario.HoraInicio = leccion1Inicio;
+                        horario.HoraFinal = leccion1Final;
+                        aDHorarios.insertarHorario(horario);
+                        espacioEncontrado = true;
+                    }
+                    else
+                    {
+                        espacioEncontrado = false;
+                    }
                 }
-                i++;
+            }
+            else
+            {
+                while (espacioEncontrado == false && i < listaProfesores.Count)
+                {
+                    // Valida si el profesor es de esa materia
+                    string condicion = $" idProfesor = '{listaProfesores[i].Id}' AND idMateria = '{horario.EMateria.IdMateria}'";
+                    if (aDHorarios.listarProfesores(condicion).Count > 0)
+                    {
+                        // Valida que un profesor pueda dar la clases necesarias a un grupo en especial previniendo que un grupo tenga dos profesores por materia.
+                        int cantidadLeccionesAsignadas = aDHorarios.obtenerLeccionesProfesor(listaProfesores[i]);
+                        if (cantidadLeccionesAsignadas + cantidadLeccionesRequeridas <= 40)
+                        {
+                            if (revisarSiProfeEstaLibre(listaProfesores[i].Id, leccion1Inicio, leccion1Final, horario.Dia))
+                            {
+                                if (cantidadLeccionesAsignadas <= 40)
+                                {
+                                    horario.EProfesor = listaProfesores[i];
+                                    horario.HoraInicio = leccion1Inicio;
+                                    horario.HoraFinal = leccion1Final;
+                                    aDHorarios.insertarHorario(horario);
+                                    espacioEncontrado = true;
+                                }
+                                else
+                                {
+                                    espacioEncontrado = false;
+                                }
+                            }
+                        }
+
+                    }
+                    i++;
+                }
             }
             return espacioEncontrado;
         }
@@ -727,42 +817,94 @@ namespace LogicaNegocio
             bool espacioEncontrado = false;
             int i = 0;
 
-            while (espacioEncontrado == false && i < listaProfesores.Count)
+            horario.EProfesor = aDHorarios.devolverProfesorPorGrupo($" h.idGrupo = {horario.EGrupo.IdGrupo} and h.idMateria = {horario.EMateria.IdMateria} ");
+            // Si el profesor cuenta con las cantidad de horas necesarias para dar las lecciones que corresponde a dicha ma
+            if (horario.EProfesor.Nombre != null)
             {
-
-                // Valida si el profesor es de esa materia
-                string condicion = $" idProfesor = '{listaProfesores[i].Id}' AND idMateria = '{horario.EMateria.IdMateria}'";
-                if (aDHorarios.listarProfesores(condicion).Count > 0)
+                if (revisarSiProfeEstaLibre(listaProfesores[i].Id, leccion1Inicio, leccion1Final, horario.Dia))
                 {
-                    if (revisarSiProfeEstaLibre(listaProfesores[i].Id, leccion1Inicio, leccion1Final, horario.Dia))
+                    if (revisarSiProfeEstaLibre(listaProfesores[i].Id, leccion2Inicio, leccion2Final, horario.Dia))
                     {
-                        if (revisarSiProfeEstaLibre(listaProfesores[i].Id, leccion2Inicio, leccion2Final, horario.Dia))
+                        if (revisarSiProfeEstaLibre(listaProfesores[i].Id, leccion3Inicio, leccion3Final, horario.Dia))
                         {
-                            if (revisarSiProfeEstaLibre(listaProfesores[i].Id, leccion3Inicio, leccion3Final, horario.Dia))
+                            if (revisarSiProfeEstaLibre(listaProfesores[i].Id, leccion4Inicio, leccion4Final, horario.Dia))
                             {
-                                if (revisarSiProfeEstaLibre(listaProfesores[i].Id, leccion4Inicio, leccion4Final, horario.Dia))
-                                {
-                                    horario.EProfesor = listaProfesores[i];
-                                    horario.HoraInicio = leccion1Inicio;
-                                    horario.HoraFinal = leccion1Final;
-                                    aDHorarios.insertarHorario(horario);
-                                    horario.HoraInicio = leccion2Inicio;
-                                    horario.HoraFinal = leccion2Final;
-                                    aDHorarios.insertarHorario(horario);
-                                    horario.HoraInicio = leccion3Inicio;
-                                    horario.HoraFinal = leccion3Final;
-                                    aDHorarios.insertarHorario(horario);
-                                    horario.HoraInicio = leccion4Inicio;
-                                    horario.HoraFinal = leccion4Final;
-                                    aDHorarios.insertarHorario(horario);
-                                    espacioEncontrado = true;                                    
-                                }
+                                horario.HoraInicio = leccion1Inicio;
+                                horario.HoraFinal = leccion1Final;
+                                aDHorarios.insertarHorario(horario);
+                                horario.HoraInicio = leccion2Inicio;
+                                horario.HoraFinal = leccion2Final;
+                                aDHorarios.insertarHorario(horario);
+                                horario.HoraInicio = leccion3Inicio;
+                                horario.HoraFinal = leccion3Final;
+                                aDHorarios.insertarHorario(horario);
+                                horario.HoraInicio = leccion4Inicio;
+                                horario.HoraFinal = leccion4Final;
+                                aDHorarios.insertarHorario(horario);
+                                espacioEncontrado = true;
                             }
                         }
                     }
                 }
-                i++;
+
+
             }
+            else
+            {
+                while (espacioEncontrado == false && i < listaProfesores.Count)
+                {
+                    // Valida si el profesor es de esa materia
+                    string condicion = $" idProfesor = '{listaProfesores[i].Id}' AND idMateria = '{horario.EMateria.IdMateria}'";
+                    if (aDHorarios.listarProfesores(condicion).Count > 0)
+                    {
+                        // Valida que un profesor pueda dar la clases necesarias a un grupo en especial previniendo que un grupo tenga dos profesores por materia.
+                        int cantidadLeccionesAsignadas = aDHorarios.obtenerLeccionesProfesor(listaProfesores[i]);
+                        if (cantidadLeccionesAsignadas + cantidadLeccionesRequeridas <= 40)
+                        {
+                            if (revisarSiProfeEstaLibre(listaProfesores[i].Id, leccion1Inicio, leccion1Final, horario.Dia))
+                            {
+                                if (revisarSiProfeEstaLibre(listaProfesores[i].Id, leccion2Inicio, leccion2Final, horario.Dia))
+                                {
+                                    if (revisarSiProfeEstaLibre(listaProfesores[i].Id, leccion3Inicio, leccion3Final, horario.Dia))
+                                    {
+                                        if (revisarSiProfeEstaLibre(listaProfesores[i].Id, leccion4Inicio, leccion4Final, horario.Dia))
+                                        {
+                                            if (cantidadLeccionesAsignadas <= 40)
+                                            {
+                                                horario.EProfesor = listaProfesores[i];
+                                                horario.HoraInicio = leccion1Inicio;
+                                                horario.HoraFinal = leccion1Final;
+                                                aDHorarios.insertarHorario(horario);
+                                                horario.HoraInicio = leccion2Inicio;
+                                                horario.HoraFinal = leccion2Final;
+                                                aDHorarios.insertarHorario(horario);
+                                                horario.HoraInicio = leccion3Inicio;
+                                                horario.HoraFinal = leccion3Final;
+                                                aDHorarios.insertarHorario(horario);
+                                                horario.HoraInicio = leccion4Inicio;
+                                                horario.HoraFinal = leccion4Final;
+                                                aDHorarios.insertarHorario(horario);
+                                                espacioEncontrado = true;
+                                            }
+                                            else
+                                            {
+                                                espacioEncontrado = false;
+                                            }
+
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                    i++;
+
+
+
+                }
+            }
+
             return espacioEncontrado;
         }
 
@@ -798,7 +940,7 @@ namespace LogicaNegocio
             {
                 EHorario eHorario = new EHorario();
                 string condicion = $" g.grado= {grado} and g.seccion = {seccion} AND h.horaInicio = '{lecciones[i,0]}' AND h.horaFin = '{lecciones[i, 1]}' AND h.dia = '{dia}' AND g.anio = {anio} ";
-                if (condicion !="")
+                if (condicion2 !="")
                 {
                     condicion = string.Format("{0} {1}", condicion, condicion2);
                 }
