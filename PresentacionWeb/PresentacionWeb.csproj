@@ -71,11 +71,19 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Web.config" />
+    <Content Include="wfrmAsistencia.aspx" />
     <Content Include="wfrmVistaHorario.aspx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="wfrmAsistencia.aspx.cs">
+      <DependentUpon>wfrmAsistencia.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="wfrmAsistencia.aspx.designer.cs">
+      <DependentUpon>wfrmAsistencia.aspx</DependentUpon>
+    </Compile>
     <Compile Include="wfrmHorario.aspx.cs">
       <DependentUpon>wfrmHorario.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

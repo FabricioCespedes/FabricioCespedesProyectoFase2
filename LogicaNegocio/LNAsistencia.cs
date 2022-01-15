@@ -194,5 +194,19 @@ namespace LogicaNegocio
 
             return resultado;
         }
+
+        public int eliminar(string condicion)
+        {
+            int result;
+            try
+            {
+                result = aDAsistencia.eliminar(condicion);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return result;
+        }
     }
 }

@@ -9,12 +9,12 @@ namespace Entidades
         EHorario eHorario;
         EEstudiante eEstudiante;
         string estado;
-        DateTime fecha;
+        string fecha;
         public EAsistencia()
         {
         }
 
-        public EAsistencia(EHorario eHorario, EEstudiante eEstudiante, string estado, DateTime fecha)
+        public EAsistencia(EHorario eHorario, EEstudiante eEstudiante, string estado, string fecha)
         {
             this.eHorario = eHorario;
             this.eEstudiante = eEstudiante;
@@ -25,6 +25,6 @@ namespace Entidades
         public EHorario EHorario { get => eHorario; set => eHorario = value; }
         public EEstudiante EEstudiante { get => eEstudiante; set => eEstudiante = value; }
         public string Estado { get => estado; set => estado = value; }
-        public DateTime Fecha { get => fecha; set => fecha = value; }
+        public string Fecha { get => fecha; set => fecha = value; }
     }
 }

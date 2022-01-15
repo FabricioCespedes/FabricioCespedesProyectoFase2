@@ -121,7 +121,7 @@ namespace AccesoDatos
         public List<EEstudiante> listarEstudiantes(string condicion = "")
         {
             List<EEstudiante> listaEstudiantes = new List<EEstudiante>();
-            string sentecia = " SELECT  e.estudianteID, e.nombreEstu, e.apellido1Estu, e.apellido2Estu, e.idEstudiante  FROM GruposEstudiantes ge JOIN grupos g on g.idGrupo = ge.idGrupo JOIN Estudiantes e on e.idEstudiante = ge.idEstudiante WHERE e.borradoEstu = 0 AND e.estadoEstu = 'ACT' ";
+            string sentecia = " SELECT  e.estudianteID, (e.nombreEstu + ' ' + e.apellido1Estu) AS Nombre, e.idEstudiante AS id FROM GruposEstudiantes ge JOIN grupos g on g.idGrupo = ge.idGrupo JOIN Estudiantes e on e.idEstudiante = ge.idEstudiante WHERE e.borradoEstu = 0 AND e.estadoEstu = 'ACT' ";
             if (!string.IsNullOrEmpty(condicion))
             {
                 sentecia = string.Format("{0}  {1}", sentecia, condicion);
@@ -145,9 +145,7 @@ namespace AccesoDatos
 
                         eEstudiante.Nombre = registro.GetString(1);
 
-                        eEstudiante.Apellido1 = registro.GetString(2);
-
-                        eEstudiante.Id = Convert.ToInt32(registro[4]);
+                        eEstudiante.Id = Convert.ToInt32(registro[2]);
 
                         listaEstudiantes.Add(eEstudiante);
                     }
@@ -346,7 +344,7 @@ namespace AccesoDatos
             SqlConnection sqlConnection = new SqlConnection(cadConexion);
             SqlCommand comando = new SqlCommand();
 
-            sentencia = $"UPDATE Asistencias set estado = '{asistencia.Estado}' Where idEstudiante = {asistencia.EEstudiante.Id} and idHorario = {asistencia.EHorario.IdHorario} and fecha = '{asistencia.Fecha}'";
+            sentencia = $"UPDATE Asistencias set estado = '{asistencia.Estado}' Where idEstudiante = {asistencia.EEstudiante.Id} and idHorario = {asistencia.EHorario.IdHorario} and fecha = '{Convert.ToDateTime(asistencia.Fecha).ToString("dd/MM/yyyy")}'";
             comando.Connection = sqlConnection;
             comando.CommandText = sentencia;
 
@@ -379,7 +377,7 @@ namespace AccesoDatos
         {
             int resultado = -1;
             string sentencia = "INSERT INTO Asistencias (idHorario,idEstudiante,estado, fecha) VALUES" +
-                $" ({asistencia.EHorario.IdHorario},{asistencia.EEstudiante.Id},'{asistencia.Estado}', '{asistencia.Fecha}') ";
+                $" ({asistencia.EHorario.IdHorario},{asistencia.EEstudiante.Id},'{asistencia.Estado}', '{ Convert.ToDateTime(asistencia.Fecha).ToString("dd/MM/yyyy")}') ";
             SqlConnection conexion = new SqlConnection(cadConexion);
             SqlCommand comando = new SqlCommand(sentencia, conexion);
 
@@ -402,6 +400,32 @@ namespace AccesoDatos
             }
             return resultado;
 
+        }
+
+        public int eliminar(string condicion)
+        {
+            int result = -1;
+            string sentecia = $"Delete from Asistencias Where {condicion}";
+
+            SqlConnection conexion = new SqlConnection(cadConexion);
+            SqlCommand comando = new SqlCommand(sentecia, conexion);
+            try
+            {
+                conexion.Open();
+                result = comando.ExecuteNonQuery();
+                conexion.Close();
+            }
+            catch (Exception)
+            {
+                result = -1;
+            }
+            finally
+            {
+                conexion.Dispose();
+                comando.Dispose();
+            }
+
+            return result;
         }
     }
 }
