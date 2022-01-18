@@ -50,6 +50,7 @@
                 <label class="form-label">Seleccione una sección si desea ver su horario</label>
                 <br />
                 <asp:DropDownList ID="txtSecciones" runat="server" class="dropdown-menu-secondary form-control" Width="100%" Height="40px">
+                     <asp:ListItem Value="0" Text="--- Seleccione una opcion ---"></asp:ListItem>
                     <asp:ListItem class="dropdown-item">7-1</asp:ListItem>
                     <asp:ListItem class="dropdown-item">7-2</asp:ListItem>
                     <asp:ListItem class="dropdown-item">7-3</asp:ListItem>

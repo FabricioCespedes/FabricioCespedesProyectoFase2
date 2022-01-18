@@ -2,6 +2,7 @@
 using Entidades;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
 
 namespace LogicaNegocio
@@ -36,13 +37,13 @@ namespace LogicaNegocio
             return listaH;
         }
 
-        public List<EProfesor> listarProfesores(string condicion = "")
+        public EProfesor obtenerProfesor(string condicion = "")
         {
-            List<EProfesor> listaP;
+            EProfesor eProfesor;
 
             try
             {
-                listaP = aDCalificaciones.listarProfesores(condicion);
+                eProfesor = aDCalificaciones.obtenerProfesor(condicion);
             }
             catch (Exception ex)
             {
@@ -50,7 +51,7 @@ namespace LogicaNegocio
                 throw ex;
             }
 
-            return listaP;
+            return eProfesor;
         }
 
         /// <summary>
@@ -95,6 +96,23 @@ namespace LogicaNegocio
             }
 
             return listaM;
+        }
+
+        public DataSet listarSolicitudes(string condicion = "")
+        {
+            DataSet tablaSolicitudes = new DataSet();
+
+            try
+            {
+                tablaSolicitudes = aDCalificaciones.listarSolicitudes(condicion);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+            return tablaSolicitudes;
         }
 
         public ECicloLectivo devolverCiclo(string condicion)
@@ -162,6 +180,72 @@ namespace LogicaNegocio
             }
 
             return resultado;
+        }
+
+        public int eliminar(string condicion)
+        {
+            int result;
+            try
+            {
+                result = aDCalificaciones.eliminar(condicion);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return result;
+        }
+
+
+        public int insert(ESolicitud solicitud)
+        {
+            int resultado;
+
+            try
+            {
+                resultado = aDCalificaciones.insertar(solicitud);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return resultado;
+        }
+
+
+        public int modificar(string observacion, string idUsuario, string idSolicitud)
+        {
+            int resultado;
+
+            try
+            {
+                resultado = aDCalificaciones.modificar(observacion, idUsuario, idSolicitud);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+            return resultado;
+        }
+
+        public ESolicitud devolverSolicitud(string condicion)
+        {
+            ESolicitud solicitud = new ESolicitud();
+
+            try
+            {
+                solicitud = aDCalificaciones.devolverSolicitud(condicion);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+            return solicitud;
         }
     }
 }

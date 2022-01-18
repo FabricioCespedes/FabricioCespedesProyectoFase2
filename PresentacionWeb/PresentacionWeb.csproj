@@ -71,12 +71,46 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Web.config" />
+    <Content Include="wfrmRevisarSolicitudes.aspx" />
+    <Content Include="wfrmCalificaciones.aspx" />
+    <Content Include="wfrmSolicitud.aspx" />
+    <Content Include="wfrmVistaInicio.aspx" />
     <Content Include="wfrmAsistencia.aspx" />
+    <Content Include="wfrmInicio.aspx" />
     <Content Include="wfrmVistaHorario.aspx" />
+    <Content Include="wfrmVistaSolicitud.aspx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="wfrmRevisarSolicitudes.aspx.cs">
+      <DependentUpon>wfrmRevisarSolicitudes.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="wfrmRevisarSolicitudes.aspx.designer.cs">
+      <DependentUpon>wfrmRevisarSolicitudes.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="wfrmCalificaciones.aspx.cs">
+      <DependentUpon>wfrmCalificaciones.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="wfrmCalificaciones.aspx.designer.cs">
+      <DependentUpon>wfrmCalificaciones.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="wfrmSolicitud.aspx.cs">
+      <DependentUpon>wfrmSolicitud.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="wfrmSolicitud.aspx.designer.cs">
+      <DependentUpon>wfrmSolicitud.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="wfrmVistaInicio.aspx.cs">
+      <DependentUpon>wfrmVistaInicio.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="wfrmVistaInicio.aspx.designer.cs">
+      <DependentUpon>wfrmVistaInicio.aspx</DependentUpon>
+    </Compile>
     <Compile Include="wfrmAsistencia.aspx.cs">
       <DependentUpon>wfrmAsistencia.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -91,6 +125,13 @@
     <Compile Include="wfrmHorario.aspx.designer.cs">
       <DependentUpon>wfrmHorario.aspx</DependentUpon>
     </Compile>
+    <Compile Include="wfrmInicio.aspx.cs">
+      <DependentUpon>wfrmInicio.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="wfrmInicio.aspx.designer.cs">
+      <DependentUpon>wfrmInicio.aspx</DependentUpon>
+    </Compile>
     <Compile Include="wfrmPlantilla.Master.cs">
       <DependentUpon>wfrmPlantilla.Master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -104,6 +145,13 @@
     </Compile>
     <Compile Include="wfrmVistaHorario.aspx.designer.cs">
       <DependentUpon>wfrmVistaHorario.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="wfrmVistaSolicitud.aspx.cs">
+      <DependentUpon>wfrmVistaSolicitud.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="wfrmVistaSolicitud.aspx.designer.cs">
+      <DependentUpon>wfrmVistaSolicitud.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

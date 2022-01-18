@@ -68,7 +68,7 @@ namespace FabricioCespedesProyectoFase2
             {
                 EMateria materia = (EMateria)cbxMaterias.SelectedItem;
                 string condicion = $" idMateria = {materia.IdMateria} ";
-                cbxProfesores.DataSource = lNCalificaciones.listarProfesores(condicion);
+               // cbxProfesores.DataSource = lNCalificaciones.listarProfesores(condicion);
             }
             catch (Exception ex)
             {

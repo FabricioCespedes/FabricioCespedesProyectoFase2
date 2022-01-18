@@ -319,7 +319,7 @@ namespace FabricioCespedesProyectoFase2
                         asistencia.Estado = estadoNuevo;
                         eHorario.IdHorario = idHorario;
                         asistencia.EHorario = eHorario;
-                        asistencia.Fecha = Convert.ToDateTime(fecha);
+                        asistencia.Fecha = fecha;
                         resultado = guardarAsistencia(asistencia);
 
                         ;

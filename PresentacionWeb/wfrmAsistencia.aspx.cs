@@ -338,11 +338,8 @@ namespace PresentacionWeb
                 int idGrupo = lNAsistencia.listarGrupos(condicion2)[0].IdGrupo;
                 condicion2 = $" dia = '{dia}' and horaInicio = '{subs3[0]}' and horaFin = '{subs3[1]}' and idMateria = {idMateria} and idGrupo = {idGrupo} ";
                 int idHorario = lNAsistencia.devolverHorario(condicion2).IdHorario;
-
                 condicion2 = $" idEstudiante = {e.CommandArgument.ToString()} and idHorario = {idHorario} and fecha = '{Convert.ToDateTime(fecha).ToString("dd/MM/yyyy")}'";
-
                 EAsistencia asistencia = lNAsistencia.devolverAsistencia(condicion2);
-
                 if (asistencia.Estado != null)
                 {
                     resultado =  lNAsistencia.eliminar($" idEstudiante = {e.CommandArgument.ToString()} and idHorario = {idHorario} and fecha = '{Convert.ToDateTime(fecha).ToString("dd/MM/yyyy")}'");
@@ -361,9 +358,6 @@ namespace PresentacionWeb
                 {
                     Session["_wrn"] = " Atencion: No hay nada que eliminar";
                 }
-
-
-
             }
             catch (Exception ex)
             {

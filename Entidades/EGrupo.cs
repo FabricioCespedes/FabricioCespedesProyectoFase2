@@ -57,5 +57,10 @@ namespace Entidades
         public int Seccion { get => seccion; set => seccion = value; }
         public int Anio { get => anio; set => anio = value; }
         public int BorradoAula { get => borradoAula; set => borradoAula = value; }
+
+        public override string ToString()
+        {
+            return grado + "-" + seccion;
+        }
     }
 }

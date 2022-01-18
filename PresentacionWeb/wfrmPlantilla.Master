@@ -13,13 +13,8 @@
     <script src="https://kit.fontawesome.com/9d13be785a.js" crossorigin="anonymous"></script>
 </head>
 <body>
-     <ul class="nav justify-content-center navbar navbar-dark bg-dark"">
-      <li class="nav-item">
-        <a class="nav-link active text-capitalize" aria-current="page" href="wfrmHorario.aspx">Horarios</a>
-      </li>
-     </ul>
     <form id="form1" runat="server">
-        <div>
+        <div id="h">
             <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
             </asp:ContentPlaceHolder>
         </div>
