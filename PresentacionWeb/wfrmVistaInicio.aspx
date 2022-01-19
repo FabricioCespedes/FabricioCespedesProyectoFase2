@@ -49,6 +49,9 @@
                     <div class="row p-2">
                         <asp:Button CssClass="btn btn-outline-secondary m-1" ID="btnHorarios" runat="server" Text="Horarios" Visible="false" OnClick="btnHorarios_Click" />
                     </div>
+                     <div class="row p-2">
+                        <asp:Button CssClass="btn btn-outline-secondary m-1" ID="btnProfe" runat="server" Text="Profesores" Visible="false" OnClick="btnProfe_Click"  />
+                    </div>
                     <div class="row p-2">
                         <asp:Button CssClass="btn btn-outline-secondary m-1" ID="btnSolicitudes" runat="server" Text="Solicitudes" Visible="false" OnClick="btnSolicitudes_Click"/>
                     </div>

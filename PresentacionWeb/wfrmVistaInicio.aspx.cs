@@ -20,6 +20,7 @@ namespace PresentacionWeb
                         break;
                     case "Asistente":
                         btnHorarios.Visible = true;
+                        btnProfe.Visible = true;
                         break;
                     case "Docente":
                         btnCalifaciones.Visible = true;
@@ -64,6 +65,12 @@ namespace PresentacionWeb
             Session.Remove("_usuario");
             Session.Remove("_idProfesor");
             Response.Redirect("wfrmInicio.aspx", false);
+        }
+
+        protected void btnProfe_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("wfrmProfesores.aspx", false);
+            
         }
     }
 }
