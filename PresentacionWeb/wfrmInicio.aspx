@@ -7,6 +7,11 @@
     <div class="container">
         <div class="card text-center">
             <h1 class="card-title">Bienvenido al sistema de colegio Fabricio</h1>
+            <h6>   Claves profesor : Usuario = p1 Contrasena = p (los usuario del profe van asi p1, p2,p3 ...) </h6>
+            <h6>   Claves director : Usuario = d2 Contrasena = d  </h6>
+                        <h6>   Claves asistente : Usuario = a1 Contrasena = a </h6>
+
+
         </div>
         <%--Alert--%>
         <div>
