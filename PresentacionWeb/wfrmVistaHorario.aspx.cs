@@ -15,31 +15,40 @@ namespace PresentacionWeb
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            int anio = Convert.ToInt32(Session["_anio"]);
-
-
-            string cadena = Session["_seccion"].ToString();
-            string[] subs = cadena.Split('-');
-            string condicion = "";
-
-            if (Convert.ToInt32(subs[0]) > 9)
+            try
             {
-                lblSecciones.Visible = true;
-                txtSecciones.Visible = true;
-                btnCambiar.Visible = true;  
-                string grupoDivido = txtSecciones.Text;
+                int anio = Convert.ToInt32(Session["_anio"]);
 
-                if (grupoDivido == "A")
+                string cadena = Session["_seccion"].ToString();
+
+                string[] subs = cadena.Split('-');
+                string condicion = "";
+
+                if (Convert.ToInt32(subs[0]) > 9)
                 {
-                    condicion = "and m.nombreMateria != 'Contabilidad'";
+                    lblSecciones.Visible = true;
+                    txtSecciones.Visible = true;
+                    btnCambiar.Visible = true;
+                    string grupoDivido = txtSecciones.Text;
+
+                    if (grupoDivido == "A")
+                    {
+                        condicion = "and m.nombreMateria != 'Contabilidad'";
+                    }
+                    else
+                    {
+                        condicion = "and m.nombreMateria != 'Computacion'";
+                    }
                 }
-                else
-                {
-                    condicion = "and m.nombreMateria != 'Computacion'";
-                }
+
+                cargarDGVHorario(Convert.ToInt32(subs[0]), Convert.ToInt32(subs[1]), anio, condicion);
+
+            }
+            catch (Exception ex)
+            {
+                Session["_err"] = $" Error: {ex.Message} ";
             }
 
-            cargarDGVHorario(Convert.ToInt32(subs[0]), Convert.ToInt32(subs[1]), anio, condicion);
         }
 
 
@@ -170,30 +179,38 @@ namespace PresentacionWeb
 
         protected void btnCambiar_Click(object sender, EventArgs e)
         {
-            int anio = Convert.ToInt32(Session["_anio"]);
-
-
-            string cadena = Session["_seccion"].ToString();
-            string[] subs = cadena.Split('-');
-            string condicion = "";
-
-            if (Convert.ToInt32(subs[0]) > 9)
+            try
             {
-                lblSecciones.Visible = true;
-                txtSecciones.Visible = true;
-                string grupoDivido = txtSecciones.Text;
+                int anio = Convert.ToInt32(Session["_anio"]);
 
-                if (grupoDivido == "A")
+
+                string cadena = Session["_seccion"].ToString();
+                string[] subs = cadena.Split('-');
+                string condicion = "";
+
+                if (Convert.ToInt32(subs[0]) > 9)
                 {
-                    condicion = "and m.nombreMateria != 'Contabilidad'";
+                    lblSecciones.Visible = true;
+                    txtSecciones.Visible = true;
+                    string grupoDivido = txtSecciones.Text;
+
+                    if (grupoDivido == "A")
+                    {
+                        condicion = "and m.nombreMateria != 'Contabilidad'";
+                    }
+                    else
+                    {
+                        condicion = "and m.nombreMateria != 'Computacion'";
+                    }
                 }
-                else
-                {
-                    condicion = "and m.nombreMateria != 'Computacion'";
-                }
+
+                cargarDGVHorario(Convert.ToInt32(subs[0]), Convert.ToInt32(subs[1]), anio, condicion);
+            }
+            catch (Exception ex)
+            {
+                Session["_err"] = $" Error: {ex.Message} ";
             }
 
-            cargarDGVHorario(Convert.ToInt32(subs[0]), Convert.ToInt32(subs[1]), anio, condicion);
         }
 
         protected void Button1_Click(object sender, EventArgs e)

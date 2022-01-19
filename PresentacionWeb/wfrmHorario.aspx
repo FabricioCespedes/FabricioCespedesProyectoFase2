@@ -7,7 +7,7 @@
         <div class="card text-center">
             <h1 class="card-title">Gestión de horarios</h1>
         </div>
-        <%--Alert--%>
+         <%--Alert--%>
         <div>
             <%  if (Session["_exito"] != null)
                 {%>
@@ -21,21 +21,27 @@
 
             <%if (Session["_err"] != null)
                 {%>
+
             <div class="alert alert-danger" role="alert">
                 <% = Session["_err"].ToString()%>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
 
-            <% }%>
+            <%  Session["_err"] = null; 
+                }%>
 
             <%if (Session["_wrn"] != null)
                 {%>
+
+
             <div class="alert alert-warning" role="alert">
                 <% = Session["_wrn"].ToString()%>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-            <% }%>
+            <% Session["_wrn"] = null; 
+                }%>
         </div>
+        <%--AlertEND--%>
         <%--AlertEND--%>
         <div class="container text-center  card  position-absolute top-50 start-50 translate-middle p-5  m-5" style="width: 30rem;">
             <i class="fas fa-calendar-alt fs-1"  ></i>

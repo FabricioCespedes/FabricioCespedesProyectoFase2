@@ -233,20 +233,21 @@ namespace PresentacionWeb
             try
             {
                 int anio = 0;
-                try
+                anio = Convert.ToInt32(txtAnio.Text);
+                if (txtSecciones.Text == "0")
                 {
-                    anio = Convert.ToInt32(txtAnio.Text);
+                    Session["_wrn"] = " Atencion: Debe de selecionar una seccion";
                 }
-                catch (Exception)
+                else
                 {
-                    throw new Exception("Ingrese solo números");
+                    Session["_seccion"] = txtSecciones.Text;
+                    Session["_anio"] = anio.ToString();
+                    Session.Remove("_exito");
+                    Session.Remove("_wrn");
+                    Session.Remove("_err");
+                    Response.Redirect("wfrmVistaHorario.aspx", false);
                 }
-                Session["_seccion"] = txtSecciones.Text;
-                Session["_anio"] = anio.ToString();
-                Session.Remove("_exito");
-                Session.Remove("_wrn");
-                Session.Remove("_err");
-                Response.Redirect("wfrmVistaHorario.aspx",false);
+
 
             }
             catch (Exception ex)
